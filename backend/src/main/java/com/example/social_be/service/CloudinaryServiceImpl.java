@@ -15,15 +15,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements FileUpload {
-    @Autowired
-    private Cloudinary cloudinary;
+  @Autowired
+  private Cloudinary cloudinary;
 
-    @Override
-    public Map uploadFile(MultipartFile multipartFile) throws IOException {
-        return cloudinary.uploader().upload(multipartFile.getBytes(), Map.of("public_id", UUID.randomUUID().toString()));
-    }
+  @Override
+  public Map uploadFile(MultipartFile multipartFile) throws IOException {
+    return cloudinary.uploader().upload(multipartFile.getBytes(), Map.of("public_id", UUID.randomUUID().toString()));
+  }
 
-    public String destroy(String publicId) throws IOException {
-        return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap()).toString();
-    }
+  public String destroy(String publicId) throws IOException {
+    return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap()).toString();
+  }
 }

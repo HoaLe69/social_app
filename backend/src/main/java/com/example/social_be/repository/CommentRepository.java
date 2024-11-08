@@ -8,13 +8,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface CommentRepository extends MongoRepository<CommentCollection, String> {
-    Page<CommentCollection> findAllByPostId(String id, Pageable pageable);
+  Page<CommentCollection> findAllByPostId(String id, Pageable pageable);
 
-    CommentCollection findCommentCollectionById(String id);
+  CommentCollection findCommentCollectionById(String id);
 
-    List<CommentCollection> findAllByUserId(String id);
+  List<CommentCollection> findAllByUserId(String id);
 
-    void deleteCommentCollectionById(String id);
+  void deleteCommentCollectionById(String id);
 
-    void deleteAllByPostId(String id);
+  void deleteAllByPostId(String id);
 }

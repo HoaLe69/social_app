@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestList {
-    private List<String> list;
+  private List<String> list;
 }

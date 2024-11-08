@@ -1,12 +1,4 @@
-import {
-  useColorModeValue,
-  Heading,
-  Text,
-  Flex,
-  Box,
-  Avatar,
-  Link
-} from '@chakra-ui/react'
+import { useColorModeValue, Heading, Text, Flex, Box, Avatar, Link } from '@chakra-ui/react'
 import WrapContent from '@components/common/wrap-content'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
@@ -28,19 +20,11 @@ const RoomsHome = () => {
     <WrapContent title="Messages">
       {rooms?.map((room, index) => {
         return (
-          <Room
-            accessToken={userLogin?.accessToken}
-            senderId={userLogin?.id}
-            key={room?.id || index}
-            room={room}
-          />
+          <Room accessToken={userLogin?.accessToken} senderId={userLogin?.id} key={room?.id || index} room={room} />
         )
       })}
       <Link as={ReactRouterLink} to="/chat">
-        <Text
-          textAlign="center"
-          color={useColorModeValue('blue.500', 'pink.400')}
-        >
+        <Text textAlign="center" color={useColorModeValue('blue.500', 'pink.400')}>
           See all in Messager
         </Text>
       </Link>
@@ -66,10 +50,7 @@ const Room = ({ accessToken, room, senderId }) => {
       align="center"
       cursor="pointer"
       _hover={{
-        backgroundColor: `${useColorModeValue(
-          'blackAlpha.200',
-          'whiteAlpha.300'
-        )}`
+        backgroundColor: `${useColorModeValue('blackAlpha.200', 'whiteAlpha.300')}`
       }}
     >
       <Avatar src={receiver?.avatar} sx={{ width: '40px', height: '40px' }} />
@@ -77,11 +58,7 @@ const Room = ({ accessToken, room, senderId }) => {
         <Heading as="h3" fontSize="md">
           {receiver?.displayName}
         </Heading>
-        <Text
-          color={useColorModeValue('gray.500', 'whiteAlpha.600')}
-          fontSize="sm"
-          noOfLines={1}
-        ></Text>
+        <Text color={useColorModeValue('gray.500', 'whiteAlpha.600')} fontSize="sm" noOfLines={1}></Text>
       </Box>
     </Flex>
   )

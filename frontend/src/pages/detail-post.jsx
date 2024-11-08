@@ -1,7 +1,7 @@
-import LayoutNotHeader from "@layout/layout-not-header";
-import { Box } from "@chakra-ui/react";
-import PostInfor from "@components/post/post-detail-infor";
-import Comment from "@components/post/comment";
+import LayoutNotHeader from '@layout/layout-not-header'
+import { Box } from '@chakra-ui/react'
+import PostInfor from '@components/post/post-detail-infor'
+import Comment from '@components/post/comment'
 
 const DetailPost = () => {
   return (
@@ -11,7 +11,7 @@ const DetailPost = () => {
         <Comment />
       </Box>
     </LayoutNotHeader>
-  );
-};
+  )
+}
 
-export default DetailPost;
+export default DetailPost

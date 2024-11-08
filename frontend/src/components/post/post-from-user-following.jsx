@@ -11,11 +11,7 @@ const PostFollowing = ({ index }) => {
   const isLoading = useSelector(state => state.post.allPostFromUser.isFetching)
   const userLogin = JSON.parse(localStorage.getItem('user'))
   useEffect(() => {
-    getAllPostFromUserFollowing(
-      dispatch,
-      userLogin?.following,
-      userLogin?.accessToken
-    )
+    getAllPostFromUserFollowing(dispatch, userLogin?.following, userLogin?.accessToken)
   }, [userLogin?.accessToken, dispatch, userLogin?.following?.length, index])
   return (
     <Box pt={4}>

@@ -14,14 +14,15 @@ import java.util.ArrayList;
 
 @Service
 public class UserService implements UserDetailsService {
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private UserRepository userRepository;
+  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+  @Autowired
+  private UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserCollection userCollection = userRepository.findUserCollectionByUserName(username);
-        if (userCollection == null) throw new UsernameNotFoundException(username);
-        return new User(userCollection.getUserName(), userCollection.getPassword(), new ArrayList<>());
-    }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserCollection userCollection = userRepository.findUserCollectionByUserName(username);
+    if (userCollection == null)
+      throw new UsernameNotFoundException(username);
+    return new User(userCollection.getUserName(), userCollection.getPassword(), new ArrayList<>());
+  }
 }

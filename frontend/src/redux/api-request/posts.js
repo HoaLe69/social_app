@@ -41,20 +41,12 @@ export const createPost = async (dispatch, navigate, formData, accessToken) => {
 }
 
 // edit post
-export const editPost = async (
-  dispatch,
-  formData,
-  postId,
-  cloudId,
-  accessToken
-) => {
+export const editPost = async (dispatch, formData, postId, cloudId, accessToken) => {
   dispatch(editPostStart())
   try {
-    const res = await axios.patch(
-      `${baseUrl}/post/edit/${postId}/${cloudId}`,
-      formData,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    )
+    const res = await axios.patch(`${baseUrl}/post/edit/${postId}/${cloudId}`, formData, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
     console.log(res)
     dispatch(editPostSuccess(res))
   } catch (err) {
@@ -142,11 +134,7 @@ export const reactPost = async (accessToken, postId, userId) => {
 // get all post from userFollowing
 // get list following
 
-export const getAllPostFromUserFollowing = async (
-  dispatch,
-  listIdUser,
-  accessToken
-) => {
+export const getAllPostFromUserFollowing = async (dispatch, listIdUser, accessToken) => {
   dispatch(getAllPostUserStart())
   try {
     const res = await axios.post(

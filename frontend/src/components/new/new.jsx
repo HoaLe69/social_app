@@ -1,11 +1,4 @@
-import {
-  Box,
-  Heading,
-  Image,
-  useColorModeValue,
-  Text,
-  Link
-} from '@chakra-ui/react'
+import { Box, Heading, Image, useColorModeValue, Text, Link } from '@chakra-ui/react'
 import axios from 'axios'
 import { forwardRef, useEffect, useState } from 'react'
 import formatTime from '../../util/timeago'
@@ -13,28 +6,16 @@ import useInfinity from '../../hooks/useInfinityScroll'
 
 const NewCard = forwardRef(({ infor }, ref) => {
   return (
-    <Box
-      ref={ref}
-      my={4}
-      py={2}
-      rounded={'10px'}
-      bg={useColorModeValue('whiteAlpha.700', 'whiteAlpha.200')}
-    >
+    <Box ref={ref} my={4} py={2} rounded={'10px'} bg={useColorModeValue('whiteAlpha.700', 'whiteAlpha.200')}>
       <Link isExternal href={infor?.url} _hover={{ textDecortion: 'none' }}>
         <Box as="header" px={2} pb={2}>
           <Heading textAlign="left" fontSize="20px">
             {infor?.title}
           </Heading>
-          <Text
-            textAlign="right"
-            color={useColorModeValue('blue.500', 'pink.400')}
-          >
+          <Text textAlign="right" color={useColorModeValue('blue.500', 'pink.400')}>
             {infor?.author}
           </Text>
-          <Text
-            textAlign={'right'}
-            color={useColorModeValue('blackAlpha.600', 'whiteAlpha.500')}
-          >
+          <Text textAlign={'right'} color={useColorModeValue('blackAlpha.600', 'whiteAlpha.500')}>
             {formatTime(infor?.publishedAt)}
           </Text>
         </Box>
@@ -51,11 +32,7 @@ const NewCard = forwardRef(({ infor }, ref) => {
             />
           </Box>
         )}
-        <Text
-          noOfLines={infor?.urlToImage ? '3' : 'none'}
-          pl={2}
-          textAlign="left"
-        >
+        <Text noOfLines={infor?.urlToImage ? '3' : 'none'} pl={2} textAlign="left">
           {infor?.description}
         </Text>
       </Link>

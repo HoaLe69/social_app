@@ -11,17 +11,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageCollection {
-    private String userId;
-    private String content;
-    private MessageCollection reply;
-    private String id;
-    private String conversationId;
-    private String createAt;
+  private String userId;
+  private String content;
+  private MessageCollection reply;
+  private String id;
+  private String conversationId;
+  private String createAt;
 
-    public MessageCollection(String content, String userId, String conversationId) {
-        this.content = content;
-        this.userId = userId;
-        this.conversationId = conversationId;
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public MessageCollection(String content, String userId, String conversationId) {
+    this.content = content;
+    this.userId = userId;
+    this.conversationId = conversationId;
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 }

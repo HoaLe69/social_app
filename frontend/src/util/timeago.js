@@ -1,6 +1,6 @@
-import moment from "moment";
+import moment from 'moment'
 
 export default function formatTime(time) {
-  const inputDate = new Date(time);
-  return moment(inputDate).fromNow();
+  const inputDate = new Date(time)
+  return moment(inputDate).fromNow()
 }

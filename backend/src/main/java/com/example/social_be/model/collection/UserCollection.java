@@ -17,37 +17,37 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class UserCollection {
-    private String id;
-    private String userName;
-    private String password;
-    private String email;
-    private String displayName;
-    private String avatar;
-    private String about;
-    private boolean isOnline;
-    private List<String> follower;
-    private List<String> following;
-    private String createAt;
-    private int activeAccount;
+  private String id;
+  private String userName;
+  private String password;
+  private String email;
+  private String displayName;
+  private String avatar;
+  private String about;
+  private boolean isOnline;
+  private List<String> follower;
+  private List<String> following;
+  private String createAt;
+  private int activeAccount;
 
-    public UserCollection() {
-        this.displayName = null;
-        this.avatar = null;
-        this.about = null;
-        this.follower = new ArrayList<>();
-        this.following = new ArrayList<>();
-    }
+  public UserCollection() {
+    this.displayName = null;
+    this.avatar = null;
+    this.about = null;
+    this.follower = new ArrayList<>();
+    this.following = new ArrayList<>();
+  }
 
-    public UserCollection(AuthSignUpRequest authSignUpRequest) {
-        this.userName = authSignUpRequest.getUserName();
-        this.email = authSignUpRequest.getEmail();
-        this.password = authSignUpRequest.getPassword();
-        this.displayName = authSignUpRequest.getUserName();
-        this.avatar = null;
-        this.about = null;
-        this.activeAccount = 0;
-        this.follower = new ArrayList<>();
-        this.following = new ArrayList<>();
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public UserCollection(AuthSignUpRequest authSignUpRequest) {
+    this.userName = authSignUpRequest.getUserName();
+    this.email = authSignUpRequest.getEmail();
+    this.password = authSignUpRequest.getPassword();
+    this.displayName = authSignUpRequest.getUserName();
+    this.avatar = null;
+    this.about = null;
+    this.activeAccount = 0;
+    this.follower = new ArrayList<>();
+    this.following = new ArrayList<>();
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 }

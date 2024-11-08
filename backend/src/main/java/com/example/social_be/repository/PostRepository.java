@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface PostRepository extends MongoRepository<PostCollection, String> {
-    PostCollection findPostCollectionById(String id);
+  PostCollection findPostCollectionById(String id);
 
-    List<PostCollection> findAllByUserId(String id);
+  List<PostCollection> findAllByUserId(String id);
 
 }

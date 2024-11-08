@@ -1,12 +1,4 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  ModalHeader,
-  Box
-} from '@chakra-ui/react'
+import { Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, ModalHeader, Box } from '@chakra-ui/react'
 import Comment from '../post/comment'
 import { useSelector } from 'react-redux'
 import Post from '../post/post'
@@ -18,11 +10,7 @@ const FeedModal = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="3xl">
       <ModalOverlay />
       <ModalContent pb={2} px={0}>
-        <ModalHeader
-          textAlign="center"
-          borderBottom="1px"
-          borderBottomColor={COLOR_THEME.BORDER}
-        >
+        <ModalHeader textAlign="center" borderBottom="1px" borderBottomColor={COLOR_THEME.BORDER}>
           Bài Viết Của {postInfor?.displayName}
         </ModalHeader>
         <ModalCloseButton />

@@ -13,14 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConversationCollection {
-    private String id;
-    private List<String> member;
-    private String lastestMessage;
-    private String createAt;
+  private String id;
+  private List<String> member;
+  private String lastestMessage;
+  private String createAt;
 
-    public ConversationCollection(List<String> member) {
-        this.lastestMessage = "Bây giờ các bạn có thể nhắn tin cho nhau";
-        this.member = member;
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public ConversationCollection(List<String> member) {
+    this.lastestMessage = "Bây giờ các bạn có thể nhắn tin cho nhau";
+    this.member = member;
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 }

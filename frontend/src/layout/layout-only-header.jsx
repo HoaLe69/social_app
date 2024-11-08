@@ -1,5 +1,5 @@
-import { Container, Box } from "@chakra-ui/react";
-import NavTop from "@components/nav/nav-top";
+import { Container, Box } from '@chakra-ui/react'
+import NavTop from '@components/nav/nav-top'
 
 const LayoutOnlyHeader = ({ children }) => {
   return (
@@ -8,7 +8,7 @@ const LayoutOnlyHeader = ({ children }) => {
       <Container maxW="container.lg">{children}</Container>
       asdjklhajksd
     </Box>
-  );
-};
+  )
+}
 
-export default LayoutOnlyHeader;
+export default LayoutOnlyHeader

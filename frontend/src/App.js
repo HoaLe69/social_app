@@ -10,21 +10,13 @@ function App() {
     <Box className="App">
       <Routes>
         {routesPublic?.map(route => {
-          return (
-            <Route
-              path={route.path}
-              element={route.component}
-              key={route.path}
-            />
-          )
+          return <Route path={route.path} element={route.component} key={route.path} />
         })}
         {routesPrivate?.map(route => {
           return (
             <Route
               path={route.path}
-              element={
-                <RequireAuthentication>{route.component}</RequireAuthentication>
-              }
+              element={<RequireAuthentication>{route.component}</RequireAuthentication>}
               key={route.path}
             />
           )

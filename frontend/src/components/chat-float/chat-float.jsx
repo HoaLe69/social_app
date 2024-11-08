@@ -8,13 +8,7 @@ const ChatFloat = () => {
   return (
     <Box position="fixed" display="flex" gap={5} bottom={0} right={10}>
       {receiver?.map((roomData, index) => {
-        return (
-          <ChatFloatRoom
-            key={roomData?.roomId || index}
-            receiver={roomData?.receiver}
-            roomId={roomData?.roomId}
-          />
-        )
+        return <ChatFloatRoom key={roomData?.roomId || index} receiver={roomData?.receiver} roomId={roomData?.roomId} />
       })}
     </Box>
   )

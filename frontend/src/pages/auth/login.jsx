@@ -10,44 +10,44 @@ import {
   Box,
   Link,
   Alert,
-  AlertIcon,
-} from "@chakra-ui/react";
-import AuthWrap from "./auth-wrap";
-import styled from "@emotion/styled";
-import { Link as ReactRouterLink, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import { login } from "@redux/api-request/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import ForgotPassword from "./forgot-assword";
+  AlertIcon
+} from '@chakra-ui/react'
+import AuthWrap from './auth-wrap'
+import styled from '@emotion/styled'
+import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
+import { useFormik } from 'formik'
+import { login } from '@redux/api-request/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
+import ForgotPassword from './forgot-assword'
 
 const FormStyled = styled.form`
   width: 400px;
   padding: 0 20px;
-`;
+`
 
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [forgotPass, setForgotPass] = useState(false);
-  const isLoadingLogin = useSelector((state) => state.auth.login.isFetching);
-  const message = useSelector((state) => state.auth.login.message);
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [forgotPass, setForgotPass] = useState(false)
+  const isLoadingLogin = useSelector(state => state.auth.login.isFetching)
+  const message = useSelector(state => state.auth.login.message)
   const formik = useFormik({
     initialValues: {
-      userName: "",
-      password: "",
+      userName: '',
+      password: ''
     },
-    onSubmit: (formData) => {
-      login(dispatch, navigate, formData);
-    },
-  });
+    onSubmit: formData => {
+      login(dispatch, navigate, formData)
+    }
+  })
   const handleForgotPassWord = () => {
-    setForgotPass(true);
-  };
+    setForgotPass(true)
+  }
 
-  const textColor = useColorModeValue("blackAlpha.600", "whiteAlpha.300");
-  const inputColor = useColorModeValue("whiteAlpha.900", "whiteAlpha.300");
-  const textActiveColor = useColorModeValue("blue.500", "pink.400");
+  const textColor = useColorModeValue('blackAlpha.600', 'whiteAlpha.300')
+  const inputColor = useColorModeValue('whiteAlpha.900', 'whiteAlpha.300')
+  const textActiveColor = useColorModeValue('blue.500', 'pink.400')
   return (
     <AuthWrap>
       {forgotPass ? (
@@ -70,7 +70,7 @@ const Login = () => {
                 name="userName"
                 id="userName"
                 _focus={{
-                  backgroundColor: `${inputColor}`,
+                  backgroundColor: `${inputColor}`
                 }}
                 onChange={formik.handleChange}
                 value={formik.values.userName}
@@ -85,7 +85,7 @@ const Login = () => {
                 variant="filled"
                 id="password"
                 _focus={{
-                  backgroundColor: `${inputColor}`,
+                  backgroundColor: `${inputColor}`
                 }}
                 onChange={formik.handleChange}
                 value={formik.values.password}
@@ -108,27 +108,21 @@ const Login = () => {
                 {message}
               </Alert>
             )}
-            <Button
-              type="submit"
-              isLoading={isLoadingLogin}
-              loadingText="Sign in"
-              colorScheme="teal"
-              width="full"
-            >
+            <Button type="submit" isLoading={isLoadingLogin} loadingText="Sign in" colorScheme="teal" width="full">
               Sign in
             </Button>
           </VStack>
           <Text mt={4} textAlign="center">
-            Don't have account yet ?{" "}
+            Don't have account yet ?{' '}
             <Link as={ReactRouterLink} color={textActiveColor} to="/register">
-              Sign up{" "}
-            </Link>{" "}
+              Sign up{' '}
+            </Link>{' '}
             now to join our community
           </Text>
         </FormStyled>
       )}
     </AuthWrap>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

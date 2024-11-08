@@ -1,11 +1,5 @@
 import PostContainer from '@components/post/post-container'
-import {
-  Avatar,
-  Text,
-  Box,
-  useColorModeValue,
-  useDisclosure
-} from '@chakra-ui/react'
+import { Avatar, Text, Box, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import CreatePostModal from '@components/modals/create'
 import { memo } from 'react'
 import ChatFloat from '@components/chat-float/chat-float'
@@ -31,11 +25,7 @@ const Home = () => {
         >
           <Avatar src={userLogin?.avatar} alt={userLogin?.displayName} />
           <Box textAlign={'left'} flex="1" height="40px" rounded="25px" px={4}>
-            <Text
-              lineHeight={'40px'}
-              color={useColorModeValue('blackAlpha.700', 'whiteAlpha.700')}
-              noOfLines={1}
-            >
+            <Text lineHeight={'40px'} color={useColorModeValue('blackAlpha.700', 'whiteAlpha.700')} noOfLines={1}>
               {userLogin?.displayName} let share your great moment to everyone
             </Text>
             <CreatePostModal isOpen={isOpen} onClose={onClose} />

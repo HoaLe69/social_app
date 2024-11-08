@@ -1,11 +1,4 @@
-import {
-  loginStart,
-  loginFailed,
-  loginSuccess,
-  registerStart,
-  registerSuccess,
-  registerFailed
-} from '../authSlice'
+import { loginStart, loginFailed, loginSuccess, registerStart, registerSuccess, registerFailed } from '../authSlice'
 import route from '@config/route'
 import { config } from './configAxiosHeader'
 import axios from 'axios'

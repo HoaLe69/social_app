@@ -25,9 +25,7 @@ const MakePost = ({ postDataEditMode }) => {
   const navigate = useNavigate()
   const isLoading = useSelector(state => state.post.createPost.isFetching)
   const isLoadingEdit = useSelector(state => state.post.editPost.isFetching)
-  const [previewSource, setPreviewSource] = useState(
-    postDataEditMode?.thumbnail || undefined
-  )
+  const [previewSource, setPreviewSource] = useState(postDataEditMode?.thumbnail || undefined)
   const userLogin = JSON.parse(localStorage.getItem('user'))
   const [err, setErr] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
@@ -81,11 +79,7 @@ const MakePost = ({ postDataEditMode }) => {
     }
   }
   const handleSubmit = () => {
-    if (
-      !formData.thumbnail &&
-      formData.formData.description &&
-      !postDataEditMode
-    ) {
+    if (!formData.thumbnail && formData.formData.description && !postDataEditMode) {
       setErr('You must upload image')
       return
     }
@@ -100,13 +94,7 @@ const MakePost = ({ postDataEditMode }) => {
     form.append('thumbnail', formData.thumbnail)
     form.append('formData', blob)
     if (postDataEditMode) {
-      editPost(
-        dispatch,
-        form,
-        postDataEditMode?.id,
-        postDataEditMode?.cloudinaryId,
-        userLogin?.accessToken
-      )
+      editPost(dispatch, form, postDataEditMode?.id, postDataEditMode?.cloudinaryId, userLogin?.accessToken)
     } else createPost(dispatch, navigate, form, userLogin?.accessToken)
   }
   const handleHideEmojiKeyboard = e => {
@@ -130,22 +118,9 @@ const MakePost = ({ postDataEditMode }) => {
             onChange={handleOnChange}
             value={formData.formData.description}
           />
-          <Box
-            fontSize="20px"
-            position="absolute"
-            right={2}
-            bottom={2}
-            zIndex={10}
-            cursor="pointer"
-            className="emoji"
-          >
+          <Box fontSize="20px" position="absolute" right={2} bottom={2} zIndex={10} cursor="pointer" className="emoji">
             <FaRegSmile />
-            <Box
-              display={showEmoji ? 'block' : 'none'}
-              position="absolute"
-              top={0}
-              right={'20px'}
-            >
+            <Box display={showEmoji ? 'block' : 'none'} position="absolute" top={0} right={'20px'}>
               <EmojiKeyboard
                 height={320}
                 width={350}
@@ -180,13 +155,7 @@ const MakePost = ({ postDataEditMode }) => {
         >
           {postDataEditMode ? 'Change' : 'Upload'}
           <MdOutlineCloudUpload />
-          <Input
-            id="input-file"
-            type="file"
-            name="image"
-            display="none"
-            onChange={handleOnChange}
-          />
+          <Input id="input-file" type="file" name="image" display="none" onChange={handleOnChange} />
         </FormLabel>
         <Box display="flex" justifyContent="center">
           <Image src={previewSource} boxSize="xs" objectFit="cover" />

@@ -1,13 +1,4 @@
-import {
-  Text,
-  Avatar,
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Link,
-  useColorModeValue
-} from '@chakra-ui/react'
+import { Text, Avatar, Box, Flex, Heading, IconButton, Link, useColorModeValue } from '@chakra-ui/react'
 import { IoMdClose } from 'react-icons/io'
 import { COLOR_THEME } from '../../constant'
 import InputRoomChat from '../conversation/input-mess'
@@ -26,19 +17,14 @@ const ChatFloatRoom = ({ receiver, roomId }) => {
   const [filterMess, setfilterMess] = useState({ message: '' })
   const userLogin = JSON.parse(localStorage.getItem('user'))
   const baseUrl = process.env.REACT_APP_API_URL
-  const { sendMessage, connect, disconnect } = useMemo(
-    () => WebSocket(setMessages, setfilterMess),
-    []
-  )
+  const { sendMessage, connect, disconnect } = useMemo(() => WebSocket(setMessages, setfilterMess), [])
   useEffect(() => {
     if (roomId) connect('messages', roomId)
   }, [])
 
   useEffect(() => {
     if (filterMess.message) {
-      const messRecallIndex = messages.findIndex(
-        el => el.id === filterMess.message
-      )
+      const messRecallIndex = messages.findIndex(el => el.id === filterMess.message)
       if (messRecallIndex !== -1) {
         const newListMessage = messages
         newListMessage[messRecallIndex] = {
@@ -81,14 +67,7 @@ const ChatFloatRoom = ({ receiver, roomId }) => {
       boxShadow="lg"
       bg={useColorModeValue('#f0e7db', '#202023')}
     >
-      <Flex
-        as="header"
-        borderBottom="1px"
-        borderColor={COLOR_THEME.BORDER}
-        alignItems="center"
-        gap={2}
-        p={2}
-      >
+      <Flex as="header" borderBottom="1px" borderColor={COLOR_THEME.BORDER} alignItems="center" gap={2} p={2}>
         <Link
           display="flex"
           alignItems="center"
@@ -108,27 +87,10 @@ const ChatFloatRoom = ({ receiver, roomId }) => {
           icon={<IoMdClose />}
         ></IconButton>
       </Flex>
-      <Box
-        display="flex"
-        flexDir="column"
-        sx={{ height: 'calc(100% - 50px )' }}
-        justifyContent="end"
-      >
-        <Box
-          p={2}
-          overflowX={'hidden'}
-          display="flex"
-          flexDir="column"
-          maxH="100%"
-          overflowY="auto"
-          ref={refDiv}
-        >
+      <Box display="flex" flexDir="column" sx={{ height: 'calc(100% - 50px )' }} justifyContent="end">
+        <Box p={2} overflowX={'hidden'} display="flex" flexDir="column" maxH="100%" overflowY="auto" ref={refDiv}>
           <Box display="flex" flexDir="column" alignItems="center" mb={20}>
-            <Avatar
-              src={receiver?.avatar}
-              size="md"
-              alt={receiver?.displayName}
-            />
+            <Avatar src={receiver?.avatar} size="md" alt={receiver?.displayName} />
             <Text color="gray.500">Let chat with {receiver?.displayName}</Text>
           </Box>
           <Box>

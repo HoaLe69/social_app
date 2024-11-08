@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ConversationRequest {
-    private List<String> member;
-    private String lastestMessage;
+  private List<String> member;
+  private String lastestMessage;
 }

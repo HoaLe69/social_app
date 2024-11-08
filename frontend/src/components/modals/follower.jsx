@@ -9,24 +9,22 @@ import {
   Heading,
   HStack,
   useColorModeValue,
-  Link,
-} from "@chakra-ui/react";
-import { Link as ReacRouterLink } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getListFollower } from "@redux/api-request/user";
+  Link
+} from '@chakra-ui/react'
+import { Link as ReacRouterLink } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getListFollower } from '@redux/api-request/user'
 
 const ListFollowerModal = ({ isOpen, onClose, listsUserIdFollower }) => {
-  const dispatch = useDispatch();
-  const accessToken = JSON.parse(localStorage.getItem("user"))?.accessToken;
-  const listFollower = useSelector(
-    (state) => state.user.getListUserFollower?.listFollower,
-  );
+  const dispatch = useDispatch()
+  const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
+  const listFollower = useSelector(state => state.user.getListUserFollower?.listFollower)
   useEffect(() => {
     if (listsUserIdFollower) {
-      getListFollower(dispatch, listsUserIdFollower, accessToken);
+      getListFollower(dispatch, listsUserIdFollower, accessToken)
     }
-  }, [dispatch, accessToken, listsUserIdFollower]);
+  }, [dispatch, accessToken, listsUserIdFollower])
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
@@ -34,32 +32,24 @@ const ListFollowerModal = ({ isOpen, onClose, listsUserIdFollower }) => {
         <ModalHeader>Follower</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {listFollower?.map((user) => {
-            return <UserItem onClose={onClose} user={user} key={user?.id} />;
+          {listFollower?.map(user => {
+            return <UserItem onClose={onClose} user={user} key={user?.id} />
           })}
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}
 
 const UserItem = ({ user, onClose }) => {
   return (
-    <Link
-      _hover={{ textDecoration: "none" }}
-      onClick={onClose}
-      as={ReacRouterLink}
-      to={`/profile/${user?.id}`}
-    >
+    <Link _hover={{ textDecoration: 'none' }} onClick={onClose} as={ReacRouterLink} to={`/profile/${user?.id}`}>
       <HStack
         p={2}
         cursor="pointer"
         rounded="10px"
         _hover={{
-          backgroundColor: `${useColorModeValue(
-            "blackAlpha.200",
-            "whiteAlpha.300",
-          )}`,
+          backgroundColor: `${useColorModeValue('blackAlpha.200', 'whiteAlpha.300')}`
         }}
       >
         <Avatar src={user?.avatar} alt={user?.displayName} />
@@ -68,7 +58,7 @@ const UserItem = ({ user, onClose }) => {
         </Heading>
       </HStack>
     </Link>
-  );
-};
+  )
+}
 
-export default ListFollowerModal;
+export default ListFollowerModal

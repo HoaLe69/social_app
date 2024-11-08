@@ -1,4 +1,4 @@
-import { Box, Container } from "@chakra-ui/react";
+import { Box, Container } from '@chakra-ui/react'
 
 const LayoutWithoutNav = ({ children }) => {
   return (
@@ -7,7 +7,7 @@ const LayoutWithoutNav = ({ children }) => {
         {children}
       </Container>
     </Box>
-  );
-};
+  )
+}
 
-export default LayoutWithoutNav;
+export default LayoutWithoutNav

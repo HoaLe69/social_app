@@ -1,9 +1,5 @@
 import axios from 'axios'
-import {
-  getAllCommentFailed,
-  getAllCommentStart,
-  getAllCommentSuccess
-} from '../commentSlice'
+import { getAllCommentFailed, getAllCommentStart, getAllCommentSuccess } from '../commentSlice'
 
 const baseUrl = process.env.REACT_APP_API_URL
 

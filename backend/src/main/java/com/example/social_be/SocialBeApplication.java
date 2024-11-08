@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class SocialBeApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SocialBeApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(SocialBeApplication.class, args);
+  }
 
 }

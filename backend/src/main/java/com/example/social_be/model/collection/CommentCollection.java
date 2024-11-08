@@ -13,37 +13,38 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CommentCollection {
-    private String id;
-    private String postId;
-    private String avatar;
-    private String displayName;
-    private String userId;
-    private String replyId;
-    private String content;
-    private List<CommentCollection> reply;
-    private String createAt;
+  private String id;
+  private String postId;
+  private String avatar;
+  private String displayName;
+  private String userId;
+  private String replyId;
+  private String content;
+  private List<CommentCollection> reply;
+  private String createAt;
 
-    public CommentCollection(String userId, String avatar, String postId, String content, String displayName) {
-        this.userId = userId;
-        this.avatar = avatar;
-        this.postId = postId;
-        this.content = content;
-        this.displayName = displayName;
-        this.reply = new ArrayList<>();
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public CommentCollection(String userId, String avatar, String postId, String content, String displayName) {
+    this.userId = userId;
+    this.avatar = avatar;
+    this.postId = postId;
+    this.content = content;
+    this.displayName = displayName;
+    this.reply = new ArrayList<>();
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 
-    public CommentCollection(String userId, String avatar, String content, String displayName, String replyId, String subCommentId) {
-        this.id = subCommentId;
-        this.userId = userId;
-        this.avatar = avatar;
-        this.content = content;
-        this.displayName = displayName;
-        this.replyId = replyId;
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public CommentCollection(String userId, String avatar, String content, String displayName, String replyId,
+      String subCommentId) {
+    this.id = subCommentId;
+    this.userId = userId;
+    this.avatar = avatar;
+    this.content = content;
+    this.displayName = displayName;
+    this.replyId = replyId;
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 
-    public CommentCollection() {
-        this.createAt = new Utilties().dayTimeFormat();
-    }
+  public CommentCollection() {
+    this.createAt = new Utilties().dayTimeFormat();
+  }
 }

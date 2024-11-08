@@ -1,12 +1,4 @@
-import {
-  Box,
-  Link,
-  Heading,
-  Image,
-  Grid,
-  GridItem,
-  useDisclosure
-} from '@chakra-ui/react'
+import { Box, Link, Heading, Image, Grid, GridItem, useDisclosure } from '@chakra-ui/react'
 import { AiFillHeart } from 'react-icons/ai'
 import { getAllPostUser } from '@redux/api-request/posts'
 import { useDispatch, useSelector } from 'react-redux'
@@ -50,20 +42,9 @@ const ProfilePostItem = ({
     onOpen()
   }
   return (
-    <Box
-      position="relative"
-      role="group"
-      cursor="pointer"
-      onClick={handleShowFullPost}
-    >
+    <Box position="relative" role="group" cursor="pointer" onClick={handleShowFullPost}>
       <Box height={{ base: '300px', lg: '400px' }}>
-        <Image
-          src={thumbnail}
-          alt={id}
-          height="full"
-          width="full"
-          objectFit="cover"
-        />
+        <Image src={thumbnail} alt={id} height="full" width="full" objectFit="cover" />
       </Box>
       <Box
         position="absolute"
@@ -76,12 +57,7 @@ const ProfilePostItem = ({
         _groupHover={{ display: 'grid' }}
         placeItems="center"
       >
-        <Box
-          display="flex"
-          alignItems="center"
-          gap="5px"
-          color="whiteAlpha.800"
-        >
+        <Box display="flex" alignItems="center" gap="5px" color="whiteAlpha.800">
           {like?.length} <AiFillHeart />
         </Box>
         <FeedModal isOpen={isOpen} onClose={onClose} />

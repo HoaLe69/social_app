@@ -9,57 +9,53 @@ import {
   Input,
   VStack,
   Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { FaArrowCircleLeft } from "react-icons/fa";
-import styled from "@emotion/styled";
-import axios from "axios";
-import VerifyEmail from "./verify-email";
+  useColorModeValue
+} from '@chakra-ui/react'
+import { useState } from 'react'
+import { FaArrowCircleLeft } from 'react-icons/fa'
+import styled from '@emotion/styled'
+import axios from 'axios'
+import VerifyEmail from './verify-email'
 const FormStyled = styled.form`
   width: 400px;
-`;
+`
 
 const ForgotPassword = ({ setForgotPass }) => {
-  const [formData, setFormData] = useState({ userName: "", email: "" });
-  const [err, setErr] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((pre) => ({ ...pre, [name]: value }));
-  };
+  const [formData, setFormData] = useState({ userName: '', email: '' })
+  const [err, setErr] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const handleOnChange = e => {
+    const { name, value } = e.target
+    setFormData(pre => ({ ...pre, [name]: value }))
+  }
 
-  const handleOnSubmit = async (e) => {
-    e.preventDefault();
+  const handleOnSubmit = async e => {
+    e.preventDefault()
     if (!formData.userName) {
-      setErr("Please enter your name!!!");
-      return;
+      setErr('Please enter your name!!!')
+      return
     }
     if (!formData.email) {
-      setErr("Please enter your email!!!");
-      return;
+      setErr('Please enter your email!!!')
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
-      const baseUrl = process.env.REACT_APP_API_URL;
-      const res = await axios.post(
-        `${baseUrl}/auth/send-email/forgot-pass`,
-        formData,
-        {},
-      );
-      console.log(res);
-      setLoading(false);
-      setSuccess(true);
+      const baseUrl = process.env.REACT_APP_API_URL
+      const res = await axios.post(`${baseUrl}/auth/send-email/forgot-pass`, formData, {})
+      console.log(res)
+      setLoading(false)
+      setSuccess(true)
     } catch (err) {
-      console.log(err);
-      setSuccess(false);
-      setErr(err.response.data.message);
-      setLoading(false);
+      console.log(err)
+      setSuccess(false)
+      setErr(err.response.data.message)
+      setLoading(false)
     }
-  };
-  const textColor = useColorModeValue("blackAlpha.600", "whiteAlpha.300");
-  const inputColor = useColorModeValue("whiteAlpha.900", "whiteAlpha.300");
+  }
+  const textColor = useColorModeValue('blackAlpha.600', 'whiteAlpha.300')
+  const inputColor = useColorModeValue('whiteAlpha.900', 'whiteAlpha.300')
   return (
     <Box w="400px">
       {success ? (
@@ -87,7 +83,7 @@ const ForgotPassword = ({ setForgotPass }) => {
                   name="userName"
                   id="userName"
                   _focus={{
-                    backgroundColor: `${inputColor}`,
+                    backgroundColor: `${inputColor}`
                   }}
                   onChange={handleOnChange}
                   value={formData.userName}
@@ -102,7 +98,7 @@ const ForgotPassword = ({ setForgotPass }) => {
                   name="email"
                   id="email"
                   _focus={{
-                    backgroundColor: `${inputColor}`,
+                    backgroundColor: `${inputColor}`
                   }}
                   onChange={handleOnChange}
                   value={formData.email}
@@ -139,12 +135,12 @@ const ForgotPassword = ({ setForgotPass }) => {
             onClick={() => setForgotPass(false)}
           >
             <FaArrowCircleLeft />
-            <Text _hover={{ textDecoration: "underline" }}> Login</Text>
+            <Text _hover={{ textDecoration: 'underline' }}> Login</Text>
           </Box>
         </Box>
       )}
     </Box>
-  );
-};
+  )
+}
 
-export default ForgotPassword;
+export default ForgotPassword

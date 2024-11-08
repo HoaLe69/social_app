@@ -1,13 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Heading,
-  Text,
-  Button,
-  useColorModeValue,
-  useDisclosure,
-  HStack
-} from '@chakra-ui/react'
+import { Avatar, Box, Heading, Text, Button, useColorModeValue, useDisclosure, HStack } from '@chakra-ui/react'
 import EditProfileModal from '@components/modals/edit-profile'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -39,49 +30,28 @@ const ProfileHeader = ({ userId: userIdFromUrl }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const currentUser = useSelector(state => state.user.users?.currentUser)
-  const isLoadingFollow = useSelector(
-    state => state.user.followOrtherUser.isFetching
-  )
+  const isLoadingFollow = useSelector(state => state.user.followOrtherUser.isFetching)
   const userLogin = JSON.parse(localStorage.getItem('user'))
-  const quantityPost = useSelector(
-    state => state.post.getPostUser?.posts
-  ).length
+  const quantityPost = useSelector(state => state.post.getPostUser?.posts).length
 
   useEffect(() => {
     getUser(dispatch, userIdFromUrl, userLogin?.accessToken)
   }, [dispatch, userIdFromUrl, userLogin?.accessToken])
 
   const handleFollowOrtherUser = async () => {
-    followOrtherUser(
-      dispatch,
-      userIdFromUrl,
-      { id: userLogin?.id },
-      userLogin?.accessToken,
-      relation,
-      userLogin
-    )
+    followOrtherUser(dispatch, userIdFromUrl, { id: userLogin?.id }, userLogin?.accessToken, relation, userLogin)
   }
   const relation = () => {
-    const isFollowingUserFromUserLogin = currentUser?.following.includes(
-      userLogin?.id
-    )
-    const ioFollowerUserFromUserLogin = currentUser?.follower.includes(
-      userLogin?.id
-    )
-    if (isFollowingUserFromUserLogin && ioFollowerUserFromUserLogin)
-      return 'Following'
+    const isFollowingUserFromUserLogin = currentUser?.following.includes(userLogin?.id)
+    const ioFollowerUserFromUserLogin = currentUser?.follower.includes(userLogin?.id)
+    if (isFollowingUserFromUserLogin && ioFollowerUserFromUserLogin) return 'Following'
     else if (ioFollowerUserFromUserLogin) return 'Following'
     else if (isFollowingUserFromUserLogin) return 'Follow back'
     return 'Follow'
   }
   return (
     <Box pt={16}>
-      <Box
-        display="flex"
-        alignItems="center"
-        flexDir={{ base: 'column', lg: 'row' }}
-        justifyContent="center"
-      >
+      <Box display="flex" alignItems="center" flexDir={{ base: 'column', lg: 'row' }} justifyContent="center">
         <Box width="300px" display="flex" justifyContent="center">
           <Avatar
             size="2xl"
@@ -102,21 +72,11 @@ const ProfileHeader = ({ userId: userIdFromUrl }) => {
                 <Button colorScheme="teal" onClick={onOpen}>
                   Edit profile
                 </Button>
-                <EditProfileModal
-                  isOpen={isOpen}
-                  user={currentUser}
-                  onClose={onClose}
-                />
+                <EditProfileModal isOpen={isOpen} user={currentUser} onClose={onClose} />
               </Box>
             ) : (
               <Box mt={2}>
-                <Button
-                  px={4}
-                  onClick={handleFollowOrtherUser}
-                  colorScheme="teal"
-                  isLoading={isLoadingFollow}
-                  mr={2}
-                >
+                <Button px={4} onClick={handleFollowOrtherUser} colorScheme="teal" isLoading={isLoadingFollow} mr={2}>
                   {relation()}
                 </Button>
                 <MessaageButton member={[userLogin?.id, currentUser?.id]} />
@@ -128,11 +88,7 @@ const ProfileHeader = ({ userId: userIdFromUrl }) => {
             <Follower follower={currentUser?.follower} />
             <Following following={currentUser?.following} />
           </Box>
-          <Box
-            p={2}
-            fontSize="14px"
-            color={useColorModeValue('blue.500', 'pink.400')}
-          >
+          <Box p={2} fontSize="14px" color={useColorModeValue('blue.500', 'pink.400')}>
             {currentUser?.about}
           </Box>
         </Box>
@@ -142,45 +98,21 @@ const ProfileHeader = ({ userId: userIdFromUrl }) => {
 }
 
 const Following = ({ following }) => {
-  const {
-    isOpen: isOpenFollowing,
-    onClose: onCloseFollowing,
-    onOpen: onOpenFollowing
-  } = useDisclosure()
+  const { isOpen: isOpenFollowing, onClose: onCloseFollowing, onOpen: onOpenFollowing } = useDisclosure()
   return (
     <Box>
-      <Details
-        quantity={following?.length}
-        title="following"
-        onClick={onOpenFollowing}
-      />
-      <ListFollowingModal
-        isOpen={isOpenFollowing}
-        onClose={onCloseFollowing}
-        listsUserIdFollowing={following}
-      />
+      <Details quantity={following?.length} title="following" onClick={onOpenFollowing} />
+      <ListFollowingModal isOpen={isOpenFollowing} onClose={onCloseFollowing} listsUserIdFollowing={following} />
     </Box>
   )
 }
 
 const Follower = ({ follower }) => {
-  const {
-    isOpen: isOpenFollower,
-    onClose: onCloseFollower,
-    onOpen: onOpenFollower
-  } = useDisclosure()
+  const { isOpen: isOpenFollower, onClose: onCloseFollower, onOpen: onOpenFollower } = useDisclosure()
   return (
     <Box>
-      <Details
-        quantity={follower?.length}
-        title="follower"
-        onClick={onOpenFollower}
-      />
-      <ListFollowerModal
-        isOpen={isOpenFollower}
-        onClose={onCloseFollower}
-        listsUserIdFollower={follower}
-      />
+      <Details quantity={follower?.length} title="follower" onClick={onOpenFollower} />
+      <ListFollowerModal isOpen={isOpenFollower} onClose={onCloseFollower} listsUserIdFollower={follower} />
     </Box>
   )
 }

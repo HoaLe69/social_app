@@ -22,24 +22,22 @@ import {
   PopoverHeader,
   PopoverCloseButton,
   PopoverBody,
-  HStack,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useFormik } from "formik";
-import { updateUser } from "@redux/api-request/user";
-import { getUserSuccess } from "@redux/userSlice";
+  HStack
+} from '@chakra-ui/react'
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useFormik } from 'formik'
+import { updateUser } from '@redux/api-request/user'
+import { getUserSuccess } from '@redux/userSlice'
 
 const ListAvatar = ({ handleChooseImage }) => {
-  const importAll = (r) => r.keys().map(r);
-  const images = importAll(
-    require.context("../../assets/avatar", false, /\.(png|jpe?g|svg)$/),
-  );
+  const importAll = r => r.keys().map(r)
+  const images = importAll(require.context('../../assets/avatar', false, /\.(png|jpe?g|svg)$/))
 
-  const exclude = ["auth", "emptyRoom"];
+  const exclude = ['auth', 'emptyRoom']
   return (
     <HStack justifyContent="center" gap="20px" flexWrap="wrap">
-      {images.map((image) => {
+      {images.map(image => {
         return (
           !exclude.includes(image) && (
             <Avatar
@@ -47,55 +45,55 @@ const ListAvatar = ({ handleChooseImage }) => {
               onClick={() => handleChooseImage(image)}
               cursor="pointer"
               _hover={{
-                boxShadow: "1px 1px 4px 4px rgba(255 , 255 ,255 , 0.7)",
+                boxShadow: '1px 1px 4px 4px rgba(255 , 255 ,255 , 0.7)'
               }}
               src={image}
             />
           )
-        );
+        )
       })}
     </HStack>
-  );
-};
+  )
+}
 
 const EditProfileModal = ({ isOpen, onClose, user }) => {
-  const dispatch = useDispatch();
-  const userLogin = JSON.parse(localStorage.getItem("user"));
-  const currentUser = useSelector((state) => state.user.users?.currentUser);
-  const isLoading = useSelector((state) => state.user.updateUser.isFetching);
-  const [previewSource, setPreviewSource] = useState(undefined);
+  const dispatch = useDispatch()
+  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const currentUser = useSelector(state => state.user.users?.currentUser)
+  const isLoading = useSelector(state => state.user.updateUser.isFetching)
+  const [previewSource, setPreviewSource] = useState(undefined)
   const formik = useFormik({
     initialValues: {
       avatar: currentUser?.avatar,
-      displayName: "",
-      about: "",
+      displayName: '',
+      about: ''
     },
-    onSubmit: (data) => {
-      const sendData = {};
+    onSubmit: data => {
+      const sendData = {}
       for (const key in data) {
-        if (key === "avatar") {
-          if (previewSource) sendData[key] = previewSource;
-        } else if (data[key] !== "") sendData[key] = data[key];
+        if (key === 'avatar') {
+          if (previewSource) sendData[key] = previewSource
+        } else if (data[key] !== '') sendData[key] = data[key]
       }
       updateUser(
         dispatch,
         currentUser?.id,
         {
-          ...sendData,
+          ...sendData
         },
-        userLogin?.accessToken,
-      );
-      dispatch(getUserSuccess({ ...user, ...sendData }));
+        userLogin?.accessToken
+      )
+      dispatch(getUserSuccess({ ...user, ...sendData }))
       const userStorage = {
         ...userLogin,
-        ...sendData,
-      };
-      localStorage.setItem("user", JSON.stringify(userStorage));
-      if (!isLoading) {
-        onClose();
+        ...sendData
       }
-    },
-  });
+      localStorage.setItem('user', JSON.stringify(userStorage))
+      if (!isLoading) {
+        onClose()
+      }
+    }
+  })
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
@@ -108,11 +106,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
           <VStack>
             <Popover>
               <PopoverTrigger>
-                <Avatar
-                  src={previewSource ? previewSource : currentUser?.avatar}
-                  cursor="pointer"
-                  size="xl"
-                />
+                <Avatar src={previewSource ? previewSource : currentUser?.avatar} cursor="pointer" size="xl" />
               </PopoverTrigger>
               <PopoverContent>
                 <PopoverArrow />
@@ -151,13 +145,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
               </FormControl>
             </Stack>
             <ModalFooter>
-              <Button
-                type="submit"
-                isLoading={isLoading}
-                loadingText="saving"
-                colorScheme="teal"
-                mr={3}
-              >
+              <Button type="submit" isLoading={isLoading} loadingText="saving" colorScheme="teal" mr={3}>
                 Save
               </Button>
               <Button variant="ghost" onClick={onClose}>
@@ -168,7 +156,7 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
         </ModalBody>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}
 
-export default EditProfileModal;
+export default EditProfileModal

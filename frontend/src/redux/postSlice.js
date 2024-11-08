@@ -54,9 +54,7 @@ export const postSlice = createSlice({
       state.editPost.error = false
       state.editPost.isFetching = false
       state.editPost.success = true
-      const index = state.allPost.posts.findIndex(
-        post => post.id === action.payload.id
-      )
+      const index = state.allPost.posts.findIndex(post => post.id === action.payload.id)
 
       const newList = [...state.allPost.posts.splice(index, 1, action.payload)]
     },
@@ -75,11 +73,7 @@ export const postSlice = createSlice({
       state.allPost.isFetching = false
       state.allPost.error = false
       state.allPost.posts = [
-        ...new Set([
-          ...state.allPost.posts,
-          ...action.payload.content,
-          { page: action.payload.number }
-        ])
+        ...new Set([...state.allPost.posts, ...action.payload.content, { page: action.payload.number }])
       ]
     },
     getAllPostFailed: state => {
@@ -116,9 +110,7 @@ export const postSlice = createSlice({
     deletePostSuccess: (state, action) => {
       state.deletePost.isFetching = false
       state.deletePost.error = false
-      state.allPost.posts = [
-        ...state.allPost.posts.filter(post => post.id !== action.payload)
-      ]
+      state.allPost.posts = [...state.allPost.posts.filter(post => post.id !== action.payload)]
     },
     deletePostFailed: state => {
       state.deletePost.error = true

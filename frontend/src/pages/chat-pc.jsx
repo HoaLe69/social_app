@@ -6,12 +6,7 @@ import { COLOR_THEME } from '../constant'
 
 const ChatPc = () => {
   return (
-    <Box
-      display="flex"
-      flexDir="column"
-      justifyContent="flex-end"
-      height="100vh"
-    >
+    <Box display="flex" flexDir="column" justifyContent="flex-end" height="100vh">
       <NavTop isFixed={true} />
       <Box display="flex" flex={1} overflow="hidden">
         <Box borderRightWidth={1} flex={1} borderColor={COLOR_THEME.BORDER}>

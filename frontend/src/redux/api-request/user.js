@@ -35,12 +35,7 @@ export const getUser = async (dispatch, id, accessToken) => {
 }
 
 //update current user
-export const updateUser = async (
-  dispatch,
-  id,
-  userInforUpdate,
-  accessToken
-) => {
+export const updateUser = async (dispatch, id, userInforUpdate, accessToken) => {
   dispatch(updateUserStart())
   try {
     await axios.patch(`${baseUrl}/user/update/${id}`, userInforUpdate, {
@@ -56,25 +51,14 @@ export const updateUser = async (
 }
 
 //follow orther user
-export const followOrtherUser = async (
-  dispatch,
-  friendId,
-  yourId,
-  accessToken,
-  relation,
-  userLogin
-) => {
+export const followOrtherUser = async (dispatch, friendId, yourId, accessToken, relation, userLogin) => {
   dispatch(followOrtherUserStart())
   try {
-    const res = await axios.patch(
-      `${baseUrl}/user/interactive/${friendId}`,
-      yourId,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
+    const res = await axios.patch(`${baseUrl}/user/interactive/${friendId}`, yourId, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
       }
-    )
+    })
     const relationship = relation()
     if (relationship === 'Following')
       localStorage.setItem(

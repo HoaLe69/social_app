@@ -7,10 +7,10 @@ import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
 
 public interface UserRepository extends MongoRepository<UserCollection, String> {
-    UserCollection findUserCollectionByUserName(String userName);
+  UserCollection findUserCollectionByUserName(String userName);
 
-    UserCollection findUserCollectionById(String Id);
+  UserCollection findUserCollectionById(String Id);
 
-    @Query("{ displayName : { $regex : ?0 } }")
-    List<UserCollection> findByLikeUserName(String name);
+  @Query("{ displayName : { $regex : ?0 } }")
+  List<UserCollection> findByLikeUserName(String name);
 }

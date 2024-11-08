@@ -42,9 +42,7 @@ const Post = forwardRef((props, ref) => {
   // paragraph ref
   const pRef = useRef()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const [isLiked, setIsLike] = useState(() =>
-    like ? like?.includes(userLogin?.id) : false
-  )
+  const [isLiked, setIsLike] = useState(() => (like ? like?.includes(userLogin?.id) : false))
   const [liked, setLiked] = useState(like || [])
   const dispatch = useDispatch()
 
@@ -89,9 +87,7 @@ const Post = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (pRef.current) {
-      const lineHeight = parseFloat(
-        window.getComputedStyle(pRef.current).lineHeight
-      )
+      const lineHeight = parseFloat(window.getComputedStyle(pRef.current).lineHeight)
       const height = pRef.current.getBoundingClientRect().height
       const calculatedNumberOfLines = Math.round(height / lineHeight)
       setNumberOfLines(calculatedNumberOfLines)
@@ -118,11 +114,7 @@ const Post = forwardRef((props, ref) => {
             <Heading as="h3" fontSize="15px">
               {displayName}
             </Heading>
-            <Text
-              fontSize="12px"
-              textAlign={'left'}
-              color={useColorModeValue('blackAlpha.600', 'whiteAlpha.500')}
-            >
+            <Text fontSize="12px" textAlign={'left'} color={useColorModeValue('blackAlpha.600', 'whiteAlpha.500')}>
               {formatTime(createAt)}
             </Text>
           </Box>
@@ -134,19 +126,11 @@ const Post = forwardRef((props, ref) => {
         )}
       </HStack>
       <Box pl={2}>
-        <Text
-          ref={pRef}
-          textAlign="left"
-          noOfLines={numberOfLines >= 3 && !isDetail ? '3' : 'none'}
-        >
+        <Text ref={pRef} textAlign="left" noOfLines={numberOfLines >= 3 && !isDetail ? '3' : 'none'}>
           {description}
         </Text>
       </Box>
-      <Box
-        display={numberOfLines >= 3 && !isDetail ? 'block' : 'none'}
-        textAlign="left"
-        pl={2}
-      >
+      <Box display={numberOfLines >= 3 && !isDetail ? 'block' : 'none'} textAlign="left" pl={2}>
         <Text
           onClick={handleReadMorePost}
           cursor="pointer"
@@ -178,10 +162,7 @@ const Post = forwardRef((props, ref) => {
         px={7}
         justify="space-between"
         borderBottom="1px"
-        borderBottomColor={useColorModeValue(
-          'blackAlpha.200',
-          'whiteAlpha.200'
-        )}
+        borderBottomColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
       >
         <Box display="flex" alignItems="center" gap="5px">
           <Box fontSize="12px" p={1} color="white" bg="pink.400" rounded="full">
@@ -199,10 +180,7 @@ const Post = forwardRef((props, ref) => {
         justify="space-around"
         mt={1}
         borderBottom="1px"
-        borderBottomColor={useColorModeValue(
-          'blackAlpha.200',
-          'whiteAlpha.200'
-        )}
+        borderBottomColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
       >
         <Flex
           flex={1}
@@ -221,11 +199,7 @@ const Post = forwardRef((props, ref) => {
           </Box>
           Like
         </Flex>
-        <Box
-          flex={1}
-          pointerEvents={isDetail && 'none'}
-          onClick={handleShowFullPost}
-        >
+        <Box flex={1} pointerEvents={isDetail && 'none'} onClick={handleShowFullPost}>
           <Flex
             onClick={onOpen}
             cursor="pointer"

@@ -3,12 +3,7 @@ import NavWrap from './nav-wrap'
 import ToggleThemeButton from '../theme-toggle-btn'
 import { GoHomeFill, GoHome, GoSearch } from 'react-icons/go'
 import { NavLink as ReactRouterLink, useLocation } from 'react-router-dom'
-import {
-  BsFillPersonFill,
-  BsFillPatchPlusFill,
-  BsPerson,
-  BsPatchPlus
-} from 'react-icons/bs'
+import { BsFillPersonFill, BsFillPatchPlusFill, BsPerson, BsPatchPlus } from 'react-icons/bs'
 import route from '@config/route'
 
 const MenuItem = ({ activeIcon, icon, href, title, subHref, ...props }) => {
@@ -40,11 +35,7 @@ const MenuItem = ({ activeIcon, icon, href, title, subHref, ...props }) => {
     >
       {active ? activeIcon : icon}
       {title && (
-        <Text
-          as="p"
-          fontSize={'12px'}
-          fontFamily={`'M PLUS Rounded 1c' , san-serif`}
-        >
+        <Text as="p" fontSize={'12px'} fontFamily={`'M PLUS Rounded 1c' , san-serif`}>
           {title}
         </Text>
       )}

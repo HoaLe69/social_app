@@ -7,10 +7,7 @@ const NotifyItem = ({ photoUrl, displayName }) => {
       align="center"
       gap="10px"
       _hover={{
-        backgroundColor: `${useColorModeValue(
-          'blackAlpha.200',
-          'whiteAlpha.300'
-        )}`
+        backgroundColor: `${useColorModeValue('blackAlpha.200', 'whiteAlpha.300')}`
       }}
       p={2}
       cursor="pointer"
@@ -30,13 +27,7 @@ const Notify = () => {
   return (
     <WrapContent title="Notification">
       {notifyDt.map((dt, index) => {
-        return (
-          <NotifyItem
-            photoUrl={dt.photoUrl}
-            displayName={dt.displayName}
-            key={index}
-          />
-        )
+        return <NotifyItem photoUrl={dt.photoUrl} displayName={dt.displayName} key={index} />
       })}
     </WrapContent>
   )

@@ -14,17 +14,7 @@ import formatTime from '../../util/timeago'
 import { BsThreeDots } from 'react-icons/bs'
 import axios from 'axios'
 
-const Message = ({
-  avatar,
-  userId,
-  id,
-  displayName,
-  content,
-  createAt,
-  isFloat,
-  sendMessage,
-  roomId
-}) => {
+const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, sendMessage, roomId }) => {
   const userLogin = JSON.parse(localStorage.getItem('user'))
   const baseUrl = process.env.REACT_APP_API_URL
   const handleRecallMessage = async () => {
@@ -61,13 +51,7 @@ const Message = ({
             {children}
           </Flex>
         ) : (
-          <Flex
-            gap="5px"
-            align="end"
-            mt={3}
-            justifyContent="end"
-            flexDir="row-reverse"
-          >
+          <Flex gap="5px" align="end" mt={3} justifyContent="end" flexDir="row-reverse">
             {children}
           </Flex>
         )}
@@ -81,11 +65,7 @@ const Message = ({
     <WrapMessage isMyMess={isMyMess}>
       <Box display="flex" gap="5px" maxW={isFloat ? '70%' : '60%'}>
         {!isMyMess && <Avatar src={avatar} alt={displayName} size="sm" />}
-        <Box
-          display="flex"
-          flexDir="column"
-          alignItems={isMyMess ? 'flex-end' : 'flex-start'}
-        >
+        <Box display="flex" flexDir="column" alignItems={isMyMess ? 'flex-end' : 'flex-start'}>
           <Box
             position="relative"
             role="group"
@@ -103,23 +83,11 @@ const Message = ({
             }}
           >
             {content?.length > 0 ? (
-              <Box
-                bg={isMyMess ? 'grassTeal' : inactive}
-                p={1}
-                px={2}
-                borderRadius="10px"
-                maxW="max-content"
-              >
+              <Box bg={isMyMess ? 'grassTeal' : inactive} p={1} px={2} borderRadius="10px" maxW="max-content">
                 <Text fontSize="16px">{content}</Text>
               </Box>
             ) : (
-              <Box
-                fontSize="16px"
-                p={2}
-                border="1px"
-                rounded="25px"
-                color={colorRecall}
-              >
+              <Box fontSize="16px" p={2} border="1px" rounded="25px" color={colorRecall}>
                 Tin nhắn đã được thu hồi
               </Box>
             )}
@@ -128,11 +96,7 @@ const Message = ({
               left={!isMyMess ? '104%' : 'unset'}
               position="absolute"
               top="0"
-              display={
-                content?.length > 0 && userId === userLogin?.id
-                  ? 'flex'
-                  : 'none'
-              }
+              display={content?.length > 0 && userId === userLogin?.id ? 'flex' : 'none'}
               alignItems="center"
               gap="5px"
             >
@@ -147,18 +111,13 @@ const Message = ({
                   size="sm"
                 />
                 <MenuList>
-                  <MenuItem onClick={handleRecallMessage}>
-                    Thu hồi tin nhắn
-                  </MenuItem>
+                  <MenuItem onClick={handleRecallMessage}>Thu hồi tin nhắn</MenuItem>
                 </MenuList>
               </Menu>
             </Box>
           </Box>
 
-          <Text
-            color={useColorModeValue('blackAlpha.800', 'whiteAlpha.700')}
-            fontSize="13px"
-          >
+          <Text color={useColorModeValue('blackAlpha.800', 'whiteAlpha.700')} fontSize="13px">
             {createAt && formatTime(createAt)}
           </Text>
         </Box>

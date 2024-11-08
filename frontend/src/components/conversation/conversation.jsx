@@ -1,12 +1,5 @@
 import WrapContent from '@components/common/wrap-content'
-import {
-  Flex,
-  Avatar,
-  Text,
-  Heading,
-  Box,
-  useColorModeValue
-} from '@chakra-ui/react'
+import { Flex, Avatar, Text, Heading, Box, useColorModeValue } from '@chakra-ui/react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -32,11 +25,7 @@ const CoversItem = ({ senderId, accessToken, room }) => {
   const textColor = useColorModeValue('gray.500', 'whiteAlpha.600')
 
   const handleOnClickRoom = () => {
-    window.history.replaceState(
-      null,
-      `Chat with ${user?.displayName}`,
-      `/chat/${room?.id}?receiver=${user?.id}`
-    )
+    window.history.replaceState(null, `Chat with ${user?.displayName}`, `/chat/${room?.id}?receiver=${user?.id}`)
     dispatch(getSelectedRoom(room?.id))
   }
   return (
@@ -73,14 +62,7 @@ const Converstation = () => {
   return (
     <WrapContent title="Message">
       {rooms.map(room => {
-        return (
-          <CoversItem
-            senderId={userLogin?.id}
-            accessToken={userLogin?.accessToken}
-            key={room.id}
-            room={room}
-          />
-        )
+        return <CoversItem senderId={userLogin?.id} accessToken={userLogin?.accessToken} key={room.id} room={room} />
       })}
     </WrapContent>
   )

@@ -13,15 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @Document("token")
 public class Token {
-    private String userName;
-    private String AcessToken;
-    private List<String> RefreshToken;
+  private String userName;
+  private String AcessToken;
+  private List<String> RefreshToken;
 
-    public Token(String name, String accessToken, String refreshToken) {
-        this.userName = name;
-        this.AcessToken = accessToken;
-        List<String> refresh = new ArrayList<>();
-        refresh.add(refreshToken);
-        this.RefreshToken = refresh;
-    }
+  public Token(String name, String accessToken, String refreshToken) {
+    this.userName = name;
+    this.AcessToken = accessToken;
+    List<String> refresh = new ArrayList<>();
+    refresh.add(refreshToken);
+    this.RefreshToken = refresh;
+  }
 }

@@ -32,27 +32,16 @@ const conversationSlice = createSlice({
       })
       const quantityRoom = state.roomFloatSelect.Listreceiver.length >= 3
       if (quantityRoom && !isOpened) {
-        state.roomFloatSelect.Listreceiver = [
-          ...state.roomFloatSelect.Listreceiver.slice(1),
-          { ...action.payload }
-        ]
+        state.roomFloatSelect.Listreceiver = [...state.roomFloatSelect.Listreceiver.slice(1), { ...action.payload }]
       } else {
-        if (isOpened)
-          state.roomFloatSelect.Listreceiver = [
-            ...state.roomFloatSelect.Listreceiver
-          ]
-        else
-          state.roomFloatSelect.Listreceiver = [
-            { ...action.payload },
-            ...state.roomFloatSelect.Listreceiver
-          ]
+        if (isOpened) state.roomFloatSelect.Listreceiver = [...state.roomFloatSelect.Listreceiver]
+        else state.roomFloatSelect.Listreceiver = [{ ...action.payload }, ...state.roomFloatSelect.Listreceiver]
       }
     },
     closeRoomFloat: (state, action) => {
-      state.roomFloatSelect.Listreceiver =
-        state.roomFloatSelect.Listreceiver.filter(room => {
-          return room.roomId !== action.payload
-        })
+      state.roomFloatSelect.Listreceiver = state.roomFloatSelect.Listreceiver.filter(room => {
+        return room.roomId !== action.payload
+      })
     },
     getLastestMessage: (state, action) => {
       state.getLastestMessage.lastestMessage = action.payload.mess

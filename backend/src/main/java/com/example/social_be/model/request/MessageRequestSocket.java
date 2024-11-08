@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageRequestSocket {
-    private String userId;
-    private String content;
-    private MessageCollection reply;
-    private String id;
-    private int deleteMessage;
-    private String conversationId;
-    private String createAt;
+  private String userId;
+  private String content;
+  private MessageCollection reply;
+  private String id;
+  private int deleteMessage;
+  private String conversationId;
+  private String createAt;
 }

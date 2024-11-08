@@ -25,14 +25,7 @@ import axios from 'axios'
 
 const MenuItemPc = ({ icon, onOpen }) => {
   return (
-    <Box
-      onClick={onOpen}
-      cursor="pointer"
-      rounded="full"
-      fontSize={'22px'}
-      bg={COLOR_THEME.BG_BUTTON}
-      p={3}
-    >
+    <Box onClick={onOpen} cursor="pointer" rounded="full" fontSize={'22px'} bg={COLOR_THEME.BG_BUTTON} p={3}>
       {icon}
     </Box>
   )
@@ -45,9 +38,7 @@ const NavMenuPc = () => {
   const userLogin = JSON.parse(localStorage.getItem('user'))
   const handleLogOut = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/auth/log-out/${userLogin?.userName}`
-      )
+      const res = await axios.get(`http://localhost:8080/api/auth/log-out/${userLogin?.userName}`)
       if (res) {
         localStorage.removeItem('user')
         navigate('/login')
@@ -74,10 +65,7 @@ const NavMenuPc = () => {
       </Menu>
       <Menu placement="bottom">
         <Tooltip label="message">
-          <MenuButton
-            display={pathname.includes('/chat') ? 'none' : 'block'}
-            _expanded={{ color: 'grassTeal' }}
-          >
+          <MenuButton display={pathname.includes('/chat') ? 'none' : 'block'} _expanded={{ color: 'grassTeal' }}>
             <MenuItemPc icon={<AiFillMessage />} title="message" />
           </MenuButton>
         </Tooltip>
