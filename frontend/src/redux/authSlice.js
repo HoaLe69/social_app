@@ -3,8 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    login: {
-      currentUser: null,
+    authState: {
+      user: null,
+      isAuthenticated: null
+    },
+    loginState: {
       isFetching: false,
       success: false,
       error: false,
@@ -18,21 +21,28 @@ export const authSlice = createSlice({
     }
   },
   reducers: {
-    loginStart: state => {
-      state.login.isFetching = true
-      state.login.message = null
+    verifyUserSuccess: (state, action) => {
+      state.authState.user = action.payload
+      state.authState.isAuthenticated = true
     },
-    loginSuccess: (state, action) => {
-      state.login.currentUser = action.payload
-      state.login.isFetching = false
-      state.login.error = false
-      state.login.success = true
-      state.login.message = null
+    verifyUserFailure: state => {
+      state.authState.user = null
+      state.authState.isAuthenticated = false
+    },
+    loginStart: state => {
+      state.loginState.isFetching = true
+      state.loginState.message = null
+    },
+    loginSuccess: state => {
+      state.loginState.isFetching = false
+      state.loginState.error = false
+      state.loginState.success = true
+      state.loginState.message = null
     },
     loginFailed: (state, action) => {
-      state.login.error = true
-      state.login.isFetching = false
-      state.login.message = action.payload
+      state.loginState.error = true
+      state.loginState.isFetching = false
+      state.loginState.message = action.payload
     },
     registerStart: state => {
       state.register.isFetching = true
@@ -49,7 +59,15 @@ export const authSlice = createSlice({
   }
 })
 
-export const { loginStart, loginSuccess, loginFailed, registerStart, registerFailed, registerSuccess } =
-  authSlice.actions
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailed,
+  registerStart,
+  registerFailed,
+  registerSuccess,
+  verifyUserSuccess,
+  verifyUserFailure
+} = authSlice.actions
 
 export default authSlice.reducer

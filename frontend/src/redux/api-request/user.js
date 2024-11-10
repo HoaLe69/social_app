@@ -1,7 +1,4 @@
 import {
-  getUserFailed,
-  getUserSuccess,
-  getUserStart,
   updateUserStart,
   updateUserSuccess,
   updateUserFailed,
@@ -12,25 +9,37 @@ import {
   getListUserFollowingFailed,
   getListUserFollowerStart,
   getListUserFollowerFailed,
-  getListUserFollowerSuccess
+  getListUserFollowerSuccess,
+  getUserProfileStart,
+  getUserProfileSuccess,
+  getUserProfileFailure
 } from '../userSlice'
 import axios from 'axios'
+import axiosClient from '../../config/axios'
+import { verifyUserFailure, verifyUserSuccess } from '../authSlice'
 
 const baseUrl = process.env.REACT_APP_API_URL
 
-//get current user
-export const getUser = async (dispatch, id, accessToken) => {
-  dispatch(getUserStart())
+export const verifyUser = async dispatch => {
   try {
-    const res = await axios.get(`${baseUrl}/user/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-    dispatch(getUserSuccess(res))
+    const user = await axiosClient.get('/user/verify')
+    dispatch(verifyUserSuccess(user))
+    return user
+  } catch (error) {
+    console.log(error)
+    dispatch(verifyUserFailure())
+  }
+}
+
+// get user profile
+export const getUserProfile = async (dispatch, userId) => {
+  dispatch(getUserProfileStart())
+  try {
+    const res = await axiosClient.get(`/user/${userId}`)
+    dispatch(getUserProfileSuccess(res))
   } catch (err) {
     console.log(err)
-    dispatch(getUserFailed())
+    dispatch(getUserProfileFailure())
   }
 }
 
@@ -77,7 +86,7 @@ export const followOrtherUser = async (dispatch, friendId, yourId, accessToken, 
         })
       )
     }
-    dispatch(getUserSuccess(res))
+    dispatch(getUserProfileSuccess(res))
   } catch (err) {
     console.log(err)
     dispatch(followOrtherUserFailed())
@@ -86,18 +95,10 @@ export const followOrtherUser = async (dispatch, friendId, yourId, accessToken, 
 
 // get list following
 
-export const getListFollowing = async (dispatch, listIdUser, accessToken) => {
+export const getListFollowing = async (dispatch, listIdUser) => {
   dispatch(getListUserFollowingStart())
   try {
-    const res = await axios.post(
-      `${baseUrl}/user/getUserFollow`,
-      { list: listIdUser },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    )
+    const res = await axiosClient.post(`${baseUrl}/user/getUserFollow`, { list: listIdUser })
     dispatch(getListUserFollowingSuccess(res))
   } catch (err) {
     console.log(err)
@@ -106,18 +107,10 @@ export const getListFollowing = async (dispatch, listIdUser, accessToken) => {
 }
 
 // get list follower
-export const getListFollower = async (dispatch, listIdUser, accessToken) => {
+export const getListFollower = async (dispatch, listIdUser) => {
   dispatch(getListUserFollowerStart())
   try {
-    const res = await axios.post(
-      `${baseUrl}/user/getUserFollow`,
-      { list: listIdUser },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    )
+    const res = await axiosClient.post(`${baseUrl}/user/getUserFollow`, { list: listIdUser })
     dispatch(getListUserFollowerSuccess(res))
   } catch (err) {
     console.log(err)

@@ -43,7 +43,8 @@ public class SecurityConfiguration {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:3000/");
+        registry.addMapping("/**").allowedOrigins("http://localhost:3000")
+            .allowCredentials(true);
       }
     };
   }
@@ -60,7 +61,9 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/post/**").authenticated()
                 .requestMatchers("/api/conversation/**").authenticated()
                 .requestMatchers("/api/message/**").authenticated()
-                .requestMatchers("/api/comment/**").authenticated())
+                .requestMatchers("/api/comment/**").authenticated()
+                .anyRequest().authenticated())
+
         .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
     httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

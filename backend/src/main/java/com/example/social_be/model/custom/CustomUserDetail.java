@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CustomUserDetail implements UserDetails {
+  private String _id;
   private String username;
   private String password;
   private String email;
@@ -22,6 +23,22 @@ public class CustomUserDetail implements UserDetails {
   private List<String> follower;
   private List<String> following;
   private Collection<? extends GrantedAuthority> authorities;
+
+  public CustomUserDetail(
+      String id, String userName, String email, String displayName,
+      String avatar, String about, List<String> follower, List<String> following,
+      Collection<? extends GrantedAuthority> authorities, String password) {
+    this._id = id;
+    this.username = userName;
+    this.email = email;
+    this.displayName = displayName;
+    this.avatar = avatar;
+    this.about = about;
+    this.follower = follower;
+    this.following = following;
+    this.authorities = authorities;
+    this.password = password;
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

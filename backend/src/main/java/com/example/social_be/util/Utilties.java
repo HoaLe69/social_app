@@ -1,8 +1,6 @@
 package com.example.social_be.util;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,4 +14,12 @@ public class Utilties {
     strDate = sdf1.format(date);
     return strDate;
   }
+
+  public static String extractUsername(String email) {
+    if (email == null || !email.contains("@")) {
+      throw new IllegalArgumentException("Invalid email address");
+    }
+    return email.substring(0, email.indexOf("@"));
+  }
+
 }

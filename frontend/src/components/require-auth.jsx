@@ -1,19 +1,19 @@
 import { useEffect } from 'react'
-import { Box } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
+import { verifyUser } from '../redux/api-request/user'
+import { useDispatch, useSelector } from 'react-redux'
 
 const RequireAuthentication = ({ children }) => {
-  const navigate = useNavigate()
-  const auth = JSON.parse(localStorage.getItem('user'))
-  window.addEventListener('storage', () => {
-    if (!auth) {
-      navigate('/login')
-    }
-  })
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(state => state.auth.authState.isAuthenticated)
+
   useEffect(() => {
-    if (!auth) navigate('/login')
-  }, [auth, navigate])
-  return <Box>{children}</Box>
+    verifyUser(dispatch)
+  }, [])
+
+  if (isAuthenticated === false) return <Navigate to="/login" replace={true} />
+
+  return children
 }
 
 export default RequireAuthentication

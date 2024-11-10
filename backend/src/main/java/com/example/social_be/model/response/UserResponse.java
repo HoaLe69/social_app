@@ -3,7 +3,6 @@ package com.example.social_be.model.response;
 import com.example.social_be.model.collection.UserCollection;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -14,10 +13,8 @@ public class UserResponse {
   private String displayName;
   private String avatar;
   private String about;
-  private boolean isOnline;
   private List<String> follower;
   private List<String> following;
-  private String createAt;
 
   public UserResponse(UserCollection user) {
     this.id = user.getId();
@@ -26,9 +23,20 @@ public class UserResponse {
     this.displayName = user.getDisplayName();
     this.avatar = user.getAvatar();
     this.about = user.getAbout();
-    this.isOnline = user.isOnline();
     this.follower = user.getFollower();
     this.following = user.getFollowing();
-    this.createAt = user.getCreateAt();
   }
+
+  public UserResponse(String _id, String userName, String email, String displayName, String avatar, String about,
+      List<String> follower, List<String> following) {
+    this.id = _id;
+    this.userName = userName;
+    this.email = email;
+    this.displayName = displayName;
+    this.avatar = avatar;
+    this.about = about;
+    this.follower = follower;
+    this.following = following;
+  }
+
 }

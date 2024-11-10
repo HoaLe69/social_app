@@ -4,7 +4,6 @@ import com.example.social_be.model.collection.UserCollection;
 import com.example.social_be.model.custom.CustomUserDetail;
 import com.example.social_be.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +22,15 @@ public class UserService implements UserDetailsService {
     UserCollection userCollection = userRepository.findUserCollectionByUserName(username);
     if (userCollection == null)
       throw new UsernameNotFoundException(username);
-    return new User(userCollection.getUserName(), userCollection.getPassword(), new ArrayList<>());
+    return new CustomUserDetail(
+        userCollection.getId(),
+        userCollection.getUserName(),
+        userCollection.getEmail(),
+        userCollection.getDisplayName(),
+        userCollection.getAvatar(),
+        userCollection.getAbout(),
+        userCollection.getFollower(),
+        userCollection.getFollowing(), new ArrayList<>(),
+        userCollection.getPassword());
   }
 }

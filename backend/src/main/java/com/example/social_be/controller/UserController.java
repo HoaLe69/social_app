@@ -3,6 +3,7 @@ package com.example.social_be.controller;
 import com.example.social_be.model.collection.CommentCollection;
 import com.example.social_be.model.collection.PostCollection;
 import com.example.social_be.model.collection.UserCollection;
+import com.example.social_be.model.custom.CustomUserDetail;
 import com.example.social_be.model.request.RequestList;
 import com.example.social_be.model.request.UserUpdateRequest;
 import com.example.social_be.model.response.MessageResponse;
@@ -10,6 +11,12 @@ import com.example.social_be.model.response.UserResponse;
 import com.example.social_be.repository.CommentRepository;
 import com.example.social_be.repository.PostRepository;
 import com.example.social_be.repository.UserRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +31,8 @@ import java.util.List;
 @CrossOrigin("http://localhost:3000/")
 @RequestMapping(value = "/api/user")
 public class UserController {
+
+  private static final Logger logger = LoggerFactory.getLogger(UserController.class);
   @Autowired
   private UserRepository userRepository;
   // get user by id
@@ -39,6 +48,23 @@ public class UserController {
   @GetMapping("/search")
   public ResponseEntity<?> searchUser(@RequestParam String name) {
     return ResponseEntity.ok(userRepository.findByLikeUserName(name).stream().limit(3));
+  }
+
+  @GetMapping("/verify")
+  public ResponseEntity<?> verifyUser() {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication != null) {
+        CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
+
+        return ResponseEntity.ok(new UserResponse(userDetail.get_id(), userDetail.getUsername(), userDetail.getEmail(),
+            userDetail.getDisplayName(), userDetail.getAvatar(), userDetail.getAvatar(), userDetail.getFollower(),
+            userDetail.getFollowing()));
+      }
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+    } catch (Exception ex) {
+      throw ex;
+    }
   }
 
   @GetMapping("/{id}")

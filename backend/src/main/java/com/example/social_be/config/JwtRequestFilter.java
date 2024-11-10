@@ -1,11 +1,11 @@
 package com.example.social_be.config;
 
 import com.example.social_be.repository.TokenRepository;
-import com.example.social_be.repository.UserRepository;
 import com.example.social_be.service.UserService;
 import com.example.social_be.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,18 +25,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
-  @Autowired
-  private TokenRepository tokenRepository;
 
   @Autowired
   private UserService userService;
 
-  private String getTokenFromRequest(HttpServletRequest request) {
-    String token = request.getHeader("Authorization");
-    if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-      return token.substring(7);
+  private String getCookies(String cookieName, Cookie[] cookies) {
+    for (int i = 0; i < cookies.length; i++) {
+      Cookie cookie = cookies[i];
+      if (cookieName.equals(cookie.getName())) {
+        return cookie.getValue();
+      }
     }
-    return null;
+    return "";
   }
 
   @Override
@@ -48,12 +47,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         return;
       }
-      String token = getTokenFromRequest(request);
+      Cookie[] cookies = request.getCookies();
+      String token = getCookies("token", cookies);
+
       if (StringUtils.hasText(token)) {
         String userName = jwtTokenUtil.getUserNameFromAccessToken(token);
+        logger.info("username " + userName);
         UserDetails userDetails = userService.loadUserByUsername(userName);
-        String tokenFromDB = tokenRepository.findTokenByUserName(userName).getAcessToken();
-        if (token.equals(tokenFromDB) && userDetails != null
+
+        if (userDetails != null
             && jwtTokenUtil.validateJwtAccessToken(token, userDetails.getUsername())) {
           UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
               null, new ArrayList<>());

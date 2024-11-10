@@ -3,9 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    users: {
+    userProfile: {
       isFetching: false,
-      currentUser: null,
+      info: null,
       error: false
     },
     updateUser: {
@@ -29,19 +29,19 @@ const userSlice = createSlice({
     }
   },
   reducers: {
-    getUserStart: state => {
-      state.users.isFetching = true
-      state.users.error = false
+    getUserProfileStart: state => {
+      state.userProfile.isFetching = true
+      state.userProfile.error = false
     },
-    getUserSuccess: (state, action) => {
-      state.users.isFetching = false
-      state.users.currentUser = action.payload
-      state.users.error = false
+    getUserProfileSuccess: (state, action) => {
+      state.userProfile.isFetching = false
+      state.userProfile.info = action.payload
+      state.userProfile.error = false
       state.followOrtherUser.isFetching = false
     },
-    getUserFailed: state => {
-      state.users.isFetching = false
-      state.users.error = true
+    getUserProfileFailure: state => {
+      state.userProfile.isFetching = false
+      state.userProfile.error = true
     },
     updateUserStart: state => {
       state.updateUser.isFetching = true
@@ -94,9 +94,9 @@ const userSlice = createSlice({
 })
 
 export const {
-  getUserStart,
-  getUserSuccess,
-  getUserFailed,
+  getUserProfileStart,
+  getUserProfileFailure,
+  getUserProfileSuccess,
   updateUserFailed,
   updateUserStart,
   updateUserSuccess,
