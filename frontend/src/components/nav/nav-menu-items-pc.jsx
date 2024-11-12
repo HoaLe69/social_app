@@ -21,7 +21,8 @@ import { BiLogOut } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import RoomsHome from '../chat-float/room-float'
-import axios from 'axios'
+import axiosClient from '../../config/axios'
+import { useSelector } from 'react-redux'
 
 const MenuItemPc = ({ icon, onOpen }) => {
   return (
@@ -35,14 +36,11 @@ const NavMenuPc = () => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
   const handleLogOut = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/auth/log-out/${userLogin?.userName}`)
-      if (res) {
-        localStorage.removeItem('user')
-        navigate('/login')
-      }
+      await axiosClient.get(`http://localhost:8080/api/auth/log-out/${userLogin?.userName}`)
+      navigate('/login')
     } catch (err) {
       console.log(err)
     }

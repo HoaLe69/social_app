@@ -19,17 +19,26 @@ import { Link as ReactRouterLink } from 'react-router-dom'
 import NavMenuPc from './nav-menu-items-pc'
 import route from '@config/route'
 import { BiSearchAlt } from 'react-icons/bi'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useDebounce from '../../hooks/useDebounce'
-import axios from 'axios'
 import { IoMdClose } from 'react-icons/io'
+import axiosClient from '../../config/axios'
+import { useSelector } from 'react-redux'
+import useClickOutside from '../../hooks/useClickOutside'
 
-const PopResult = ({ result, setResult, userLoginId }) => {
+const PopResult = ({ result, isOpen, setVisibleResult, userLoginId }) => {
+  const refContainer = useRef(null)
   const bgHover = useColorModeValue('blackAlpha.200', 'whiteAlpha.300')
   const users = result.filter(user => user.id !== userLoginId) || []
+
+  const handleClosePopResult = useCallback(() => {
+    setVisibleResult(false)
+  }, [])
+  useClickOutside(refContainer, handleClosePopResult)
   return (
     <Box
-      display={users?.length > 0 ? 'block' : 'none'}
+      ref={refContainer}
+      display={isOpen ? 'block' : 'none'}
       p={1}
       rounded="10px"
       pos="absolute"
@@ -41,10 +50,10 @@ const PopResult = ({ result, setResult, userLoginId }) => {
     >
       <Box display="flex" alignItems="center">
         <Heading fontSize="16px">Result</Heading>
-        <IconButton ml="auto" onClick={() => setResult([])} icon={<IoMdClose />} size="sm" rounded="full" />
+        <IconButton onClick={handleClosePopResult} ml="auto" icon={<IoMdClose />} size="sm" rounded="full" />
       </Box>
       {users?.length === 0 ? (
-        <Box p={1}>Khong tim thay ket qua</Box>
+        <Box p={1}>No search result</Box>
       ) : (
         <Box p={1}>
           {users?.map(user => {
@@ -73,16 +82,15 @@ const PopResult = ({ result, setResult, userLoginId }) => {
 }
 
 const NavTop = ({ isFixed }) => {
-  const baseUrl = process.env.REACT_APP_API_URL
-
   const [search, setSearchValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState([])
-  const searchOutput = useDebounce(search)
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const [visibleResult, setVisibleResult] = useState(false)
+  const debounceValue = useDebounce(search)
+  const userLogin = useSelector(state => state.auth.authState.user)
 
   useEffect(() => {
-    if (!searchOutput.trim()) {
+    if (!debounceValue.trim()) {
       setLoading(false)
       return
     }
@@ -90,20 +98,20 @@ const NavTop = ({ isFixed }) => {
     const getSearchResult = async () => {
       try {
         setLoading(true)
-        const res = await axios.get(`${baseUrl}/user/search?name=${searchOutput}`, {
-          headers: { Authorization: `Bearer ${userLogin?.accessToken}` }
-        })
+        const res = await axiosClient.get(`/user/search?email=${debounceValue}`)
         if (res) {
           setResult(res)
-          setLoading(false)
+          setVisibleResult(true)
         }
       } catch (err) {
         setLoading(false)
         console.log(err)
+      } finally {
+        setLoading(false)
       }
     }
     getSearchResult()
-  }, [searchOutput, baseUrl])
+  }, [debounceValue])
 
   const handleOnChange = e => {
     setSearchValue(e.target.value)
@@ -130,7 +138,12 @@ const NavTop = ({ isFixed }) => {
               </InputRightElement>
             )}
           </InputGroup>
-          <PopResult userLoginId={userLogin?.id} result={result} setResult={setResult} />
+          <PopResult
+            userLoginId={userLogin?.id}
+            result={result}
+            isOpen={visibleResult}
+            setVisibleResult={setVisibleResult}
+          />
         </Box>
 
         <Box display={{ lg: 'none' }}>
