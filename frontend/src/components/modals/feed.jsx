@@ -5,25 +5,24 @@ import Post from '../post/post'
 import { COLOR_THEME } from '../../constant'
 
 const FeedModal = ({ isOpen, onClose }) => {
-  const postInfor = useSelector(state => state.post?.currentPostInfor.post)
+  const postInfo = useSelector(state => state.post?.currentPostInfor.post)
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+    <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} size="3xl">
       <ModalOverlay />
       <ModalContent pb={2} px={0}>
         <ModalHeader textAlign="center" borderBottom="1px" borderBottomColor={COLOR_THEME.BORDER}>
-          Bài Viết Của {postInfor?.displayName}
+          Bài Viết Của {postInfo?.displayName}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody
           paddingInlineStart={0}
           paddingInlineEnd={0}
-          display="flex"
-          flexDir="column"
-          maxH="75vh"
-          overflowY="auto"
+          // display="flex"
+          // flexDir="column"
+          // maxH="75vh"
         >
           <Box>
-            <Post {...postInfor} isDetail />
+            <Post {...postInfo} isFullPost />
           </Box>
           <Comment isOpen={isOpen} />
         </ModalBody>

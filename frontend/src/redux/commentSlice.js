@@ -7,7 +7,8 @@ const commentSlice = createSlice({
       isFetching: false,
       error: false,
       comment: []
-    }
+    },
+    amountCommentCurrPost: null
   },
   reducers: {
     getAllCommentStart: state => {
@@ -21,9 +22,13 @@ const commentSlice = createSlice({
     getAllCommentFailed: state => {
       state.allComment.isFetching = false
       state.allComment.error = true
+    },
+    getAmountCommentCurrPost: (state, action) => {
+      state.amountCommentCurrPost = action.payload
     }
   }
 })
 
-export const { getAllCommentStart, getAllCommentSuccess, getAllCommentFailed } = commentSlice.actions
+export const { getAllCommentStart, getAllCommentSuccess, getAllCommentFailed, getAmountCommentCurrPost } =
+  commentSlice.actions
 export default commentSlice.reducer

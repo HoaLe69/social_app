@@ -11,64 +11,45 @@ import {
   MenuList,
   MenuButton,
   MenuItem,
-  Button
+  Button,
+  Spinner
 } from '@chakra-ui/react'
-import { useSelector } from 'react-redux'
-import { useState, useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useState, useEffect, useCallback, memo } from 'react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import InputComment from './input-comment'
-import socketService from '../../hooks/useWebSocket'
-import axios from 'axios'
+import { useStompClient } from '../../hooks/useWebSocket'
 import { BsThreeDots } from 'react-icons/bs'
 import { AiFillDelete } from 'react-icons/ai'
 import formatTime from '../../util/timeago'
-import ReplyComment from './reply-comment'
-import { GoReply } from 'react-icons/go'
+// import ReplyComment from './reply-comment'
+// import { GoReply } from 'react-icons/go'
 import { IoIosArrowDown } from 'react-icons/io'
+import { getAllComment } from '../../redux/api-request/comment'
+import { useToast } from '@chakra-ui/react'
+import { useInView } from 'react-intersection-observer'
+import { getAmountCommentCurrPost } from '../../redux/commentSlice'
 
-const CommentItem = ({ userOfPost, comment, postId, sendMessage }) => {
-  const [showReplyInput, setShowReplyInput] = useState({
-    show: false,
-    replyId: '',
-    displayName: undefined
-  })
-  const [showReplyComment, setShowReplyComment] = useState(false)
-  const baseUrl = process.env.REACT_APP_API_URL
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const handleDeleteComment = async (subCommentId = '') => {
-    if (subCommentId.length > 0) {
-      console.log('delete subComment')
-      sendMessage(
-        {
-          deleteComment: 1,
-          id: comment.id,
-          subCommentId: subCommentId
-        },
-        'comments',
-        postId
-      )
-    } else {
-      sendMessage(
-        {
-          deleteComment: 1,
-          id: comment.id
-        },
-        'comments',
-        postId
-      )
-    }
-    try {
-      const url =
-        subCommentId.length > 0
-          ? `${baseUrl}/comment/${comment?.id}/${postId}/${subCommentId}`
-          : `${baseUrl}/comment/${comment?.id}/${postId}`
-      await axios.delete(url, {
-        headers: { Authorization: `Bearer ${userLogin?.accessToken}` }
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }
+const CommentItem = memo(({ userOfPost, comment, onDelete }) => {
+  // const [replyCommentData, setReplyCommentData] = useState({
+  //   visible: false,
+  //   replyTo: '',
+  //   displayName: undefined
+  // })
+  //  const [showReplyComment, setShowReplyComment] = useState(false)
+  const userLogin = useSelector(state => state.auth.authState.user)
+
+  // const handleReplyComment = useCallback(replyTo => {
+  //   setReplyCommentData(pre => ({
+  //     ...pre,
+  //     root: comment?.id,
+  //     replyTo,
+  //     visible: true,
+  //     displayName: comment?.displayName
+  //   }))
+  //   setShowReplyComment(true)
+  // }, [])
+
   return (
     <Box pos="relative">
       <HStack p={2} px={2} alignItems="start">
@@ -80,32 +61,29 @@ const CommentItem = ({ userOfPost, comment, postId, sendMessage }) => {
             <Heading fontSize={'13px'}>{comment?.displayName}</Heading>
             <Text as="p">{comment?.content}</Text>
           </Box>
-          <Text
-            ml={2}
-            fontSize="12px"
-            fontWeight="bold"
-            color={useColorModeValue('gray.700', 'whiteAlpha.600')}
-            cursor="pointer"
-            _hover={{ textDecoration: 'underline' }}
-            onClick={() => {
-              setShowReplyInput(pre => ({
-                ...pre,
-                replyId: comment?.userId,
-                show: true,
-                displayName: comment?.displayName
-              }))
-              setShowReplyComment(true)
-            }}
-          >
-            reply
-          </Text>
+          {/* <Text */}
+          {/*   ml={2} */}
+          {/*   fontSize="12px" */}
+          {/*   fontWeight="bold" */}
+          {/*   color={useColorModeValue('gray.700', 'whiteAlpha.600')} */}
+          {/*   cursor="pointer" */}
+          {/*   _hover={{ textDecoration: 'underline' }} */}
+          {/*   onClick={() => handleReplyComment(comment?.id)} */}
+          {/* > */}
+          {/*   reply */}
+          {/* </Text> */}
         </Box>
         <Box>
           {(userLogin?.id === comment?.userId || userLogin?.id === userOfPost) && (
             <Menu placement="bottom-end">
               <MenuButton size="sm" rounded="full" icon={<BsThreeDots />} as={IconButton} />
               <MenuList>
-                <MenuItem leftIcon={<AiFillDelete />} loadingText="delete" as={Button} onClick={handleDeleteComment}>
+                <MenuItem
+                  leftIcon={<AiFillDelete />}
+                  loadingText="delete"
+                  as={Button}
+                  onClick={() => onDelete(comment?.id)}
+                >
                   delete
                 </MenuItem>
               </MenuList>
@@ -117,138 +95,163 @@ const CommentItem = ({ userOfPost, comment, postId, sendMessage }) => {
         </Box>
       </HStack>
       <Box pl={12}>
-        <HStack display={comment.reply.length > 0 && showReplyComment === false ? 'flex' : 'none'}>
-          <Box sx={{ transform: 'rotate(180deg)' }}>
-            <GoReply />
-          </Box>
-          <Text
-            fontSize="15px"
-            cursor="pointer"
-            _hover={{ textDecoration: 'underline' }}
-            color={useColorModeValue('blackAlpha.700', 'whiteAlpha.600')}
-            onClick={() => setShowReplyComment(true)}
-          >
-            <strong>Xem thêm {comment?.reply?.length} phản hồi</strong>
-          </Text>
-        </HStack>
-        <Box display={showReplyComment || showReplyInput.show ? 'block' : 'none'}>
-          {comment?.reply?.map((reply, index) => {
-            return (
-              <ReplyComment
-                userOfPost={userOfPost}
-                handleDeleteComment={handleDeleteComment}
-                setShowReply={setShowReplyInput}
-                replys={comment?.reply}
-                rootComment={comment}
-                reply={reply}
-                key={reply?.id || index}
-              />
-            )
-          })}
-        </Box>
+        {/* <HStack display={comment?.reply?.length > 0 && showReplyComment === false ? 'flex' : 'none'}> */}
+        {/*   <Box sx={{ transform: 'rotate(180deg)' }}> */}
+        {/*     <GoReply /> */}
+        {/*   </Box> */}
+        {/*   <Text */}
+        {/*     fontSize="15px" */}
+        {/*     cursor="pointer" */}
+        {/*     _hover={{ textDecoration: 'underline' }} */}
+        {/*     color={useColorModeValue('blackAlpha.700', 'whiteAlpha.600')} */}
+        {/*     onClick={() => setShowReplyComment(true)} */}
+        {/*   > */}
+        {/*     <strong>Xem thêm {comment?.reply?.length} phản hồi</strong> */}
+        {/*   </Text> */}
+        {/* </HStack> */}
+        {/* <Box display={showReplyComment || replyCommentData.visible ? 'block' : 'none'}> */}
+        {/*TODO: render reply comment here*/}
+        {/* </Box> */}
       </Box>
-      <Box px={4} pl={8} display={showReplyInput.show ? 'block' : 'none'}>
-        <HStack alignItems="center" px={2}>
-          <Link>
-            <Avatar src={userLogin?.avatar} size="sm" />
-          </Link>
-          <Box mt={2} bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')} alignItems="center" flex={1}>
-            <InputComment
-              sendMessage={sendMessage}
-              id={comment?.id}
-              postId={postId}
-              displayName={showReplyInput?.displayName}
-              replyId={showReplyInput?.replyId}
-            />
-          </Box>
-        </HStack>
-      </Box>
+      {/* <Box px={4} pl={8} display={replyCommentData.visible ? 'block' : 'none'}> */}
+      {/*   <HStack alignItems="center" px={2}> */}
+      {/*     <Link> */}
+      {/*       <Avatar src={userLogin?.avatar} size="sm" /> */}
+      {/*     </Link> */}
+      {/*     <Box mt={2} bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')} alignItems="center" flex={1}> */}
+      {/*       <InputComment */}
+      {/*         sendMessage={sendMessage} */}
+      {/*         id={comment?.id} */}
+      {/*         postId={postId} */}
+      {/*         reply={{ */}
+      {/*           root: replyCommentData.root, */}
+      {/*           displayName: replyCommentData?.displayName, */}
+      {/*           to: replyCommentData?.replyTo */}
+      {/*         }} */}
+      {/*       /> */}
+      {/*     </Box> */}
+      {/*   </HStack> */}
+      {/* </Box> */}
     </Box>
   )
-}
+})
 
-const Comment = ({ isOpen }) => {
-  const [filterDel, setFilterDel] = useState({ message: '' })
+const Comment = () => {
+  const toast = useToast()
   const [comments, setComments] = useState([])
-  const [pageNumber, setPageNumber] = useState(0)
-  const [totalComment, setTotalComment] = useState(0)
-  const { sendMessage, disconnect, connect } = useMemo(() => socketService(setComments, setFilterDel), [])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const { inView, ref } = useInView({ threshold: 1 })
+
   const postId = useSelector(state => state.post?.currentPostInfor?.post?.id)
   const userOfPost = useSelector(state => state.post?.currentPostInfor?.post?.userId)
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const baseUrl = process.env.REACT_APP_API_URL
-  useEffect(() => {
-    const arrId = filterDel.message.trim().split(' ')
-    if (arrId.length === 2) {
-      const fixComment = comments.find(com => com?.id === arrId[0])
-      if (fixComment) {
-        const subCommentFix = fixComment?.reply?.filter(sub => sub?.id !== arrId[1])
-        fixComment.reply = subCommentFix
-        setComments([...comments])
+  const userLogin = useSelector(state => state.auth.authState.user)
+
+  const handleIncomingComment = useCallback(message => {
+    const body = message?.body
+    try {
+      if (body.error) throw new Error(body.error)
+      if (body.action === 'DELETE') {
+        setComments(pre => {
+          const filterDel = pre.filter(cmt => cmt.id !== body.id)
+          return filterDel
+        })
+      } else {
+        setComments(pre => [message.body.comment, ...pre])
       }
-    } else {
-      setComments(pre => pre.filter(comment => comment?.id !== filterDel.message))
+      dispatch(getAmountCommentCurrPost(message.body.amountComment))
+    } catch (error) {
+      toast({
+        title: 'Comment',
+        position: 'bottom-left',
+        description: error.message || 'Something went wrong',
+        status: 'info',
+        duration: 1500,
+        isClosable: true
+      })
     }
-  }, [filterDel.message])
-  useEffect(() => {
-    if (postId) {
-      const getAllComment = async () => {
-        try {
-          const res = await axios.get(`${baseUrl}/comment/${postId}?page=${pageNumber}`, {
-            headers: { Authorization: `Bearer ${userLogin?.accessToken}` }
-          })
-          console.log(res)
-          setTotalComment(res.totalElements)
-          setComments(pre => [...pre, ...res.content])
-        } catch (err) {
-          console.log(err)
-        }
+  }, [])
+
+  const { sendMessage } = useStompClient(`/topic/comments/${postId}`, handleIncomingComment)
+
+  const dispatch = useDispatch()
+
+  const loadCommentHistory = useCallback(async () => {
+    if (loading || !hasMore) return
+    try {
+      setLoading(true)
+      //      await new Promise(resolve => setTimeout(resolve, 10000))
+      const response = await getAllComment(dispatch, postId, page)
+      if (!response.content.length) {
+        setHasMore(false)
+        return
       }
-      getAllComment()
+      setComments(pre => {
+        return [...pre, ...response.content]
+        // const sorted = [...pre, ...response.content].sort((a, b) => new Date(a.createAt) - new Date(b.createAt))
+        // return sorted
+      })
+      setPage(pre => pre + 1)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoading(false)
     }
-  }, [postId, userLogin?.accessToken, baseUrl, pageNumber])
+  }, [page, hasMore])
 
   useEffect(() => {
-    if (isOpen) {
-      connect('comments', postId)
+    if (inView && hasMore && !loading) {
+      console.log('run code inside useEffect')
+      loadCommentHistory()
     }
-    return () => disconnect()
-  }, [isOpen, postId])
+  }, [inView])
+
+  const handleDeleteComment = commentId => {
+    const message = {
+      action: 'DELETE',
+      id: commentId
+    }
+    sendMessage(`/app/comments/${postId}`, message)
+  }
+
+  const inputBackgroundColor = useColorModeValue('#f0e7db', '#202023')
+
+  // console.log({ loading, hasMore })
   return (
-    <Box position="relative">
-      {comments?.map((comment, index) => {
-        return (
-          <CommentItem
-            filterDel={filterDel}
-            key={comment?.id || index}
-            userOfPost={userOfPost}
-            comment={comment}
-            setComments={setComments}
-            sendMessage={sendMessage}
-            postId={postId}
-          />
-        )
-      })}
-      <HStack justifyContent="center" alignItems="center" display={comments.length >= totalComment ? 'none' : 'flex'}>
-        <Text
-          fontWeight="bold"
-          color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
-          cursor="pointer"
-          _hover={{ textDecoration: 'underline' }}
-          onClick={() => setPageNumber(pre => pre + 1)}
-        >
-          Xem thêm bình luận
-        </Text>
-        <Box>
-          <IoIosArrowDown />
-        </Box>
-      </HStack>
-      <HStack alignItems="center" px={2}>
+    <Box>
+      <Box>
+        {comments?.map((comment, index) => {
+          return (
+            <CommentItem
+              key={comment?.id || index}
+              userOfPost={userOfPost}
+              comment={comment}
+              sendMessage={sendMessage}
+              onDelete={handleDeleteComment}
+            />
+          )
+        })}
+      </Box>
+      <Box width="full" display="flex" alignItems="center" justifyContent="center" pt="3" pb="16" ref={ref}>
+        {loading && <Spinner />}
+      </Box>
+      <HStack
+        position="absolute"
+        bottom="0"
+        left={0}
+        right={0}
+        bg={inputBackgroundColor}
+        boxShadow="dark-lg"
+        alignItems="center"
+        px={2}
+        py={3}
+      >
         <Link>
           <Avatar src={userLogin?.avatar} size="sm" />
         </Link>
         <Box mt={2} bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')} alignItems="center" flex={1}>
-          <InputComment postId={postId} sendMessage={sendMessage} />
+          <InputComment isRoot postId={postId} sendMessage={sendMessage} />
         </Box>
       </HStack>
     </Box>

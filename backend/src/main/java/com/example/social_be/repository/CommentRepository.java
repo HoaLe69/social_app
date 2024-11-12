@@ -9,12 +9,13 @@ import java.util.List;
 
 public interface CommentRepository extends MongoRepository<CommentCollection, String> {
   Page<CommentCollection> findAllByPostId(String id, Pageable pageable);
+  // List<CommentCollection> findAllByPostId(String id);
 
   CommentCollection findCommentCollectionById(String id);
 
   List<CommentCollection> findAllByUserId(String id);
 
-  void deleteCommentCollectionById(String id);
+  CommentCollection deleteCommentCollectionById(String id);
 
   void deleteAllByPostId(String id);
 }

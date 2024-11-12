@@ -18,9 +18,10 @@ public class CommentCollection {
   private String avatar;
   private String displayName;
   private String userId;
-  private String replyId;
+  private String replyTo;
   private String content;
-  private List<CommentCollection> reply;
+  private String level;
+  private ArrayList<String> subCommentIds;
   private String createAt;
 
   public CommentCollection(String userId, String avatar, String postId, String content, String displayName) {
@@ -29,7 +30,7 @@ public class CommentCollection {
     this.postId = postId;
     this.content = content;
     this.displayName = displayName;
-    this.reply = new ArrayList<>();
+    this.subCommentIds = new ArrayList<>();
     this.createAt = new Utilties().dayTimeFormat();
   }
 
@@ -40,11 +41,12 @@ public class CommentCollection {
     this.avatar = avatar;
     this.content = content;
     this.displayName = displayName;
-    this.replyId = replyId;
+    this.replyTo = replyId;
     this.createAt = new Utilties().dayTimeFormat();
   }
 
   public CommentCollection() {
     this.createAt = new Utilties().dayTimeFormat();
+    this.subCommentIds = new ArrayList<>();
   }
 }

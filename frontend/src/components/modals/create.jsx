@@ -12,7 +12,9 @@ const CreatePostModal = ({ mode, isOpen, onClose, postDataEditMode }) => {
   useEffect(() => {
     if (isCreateSuccess || isEditSuccess) {
       onClose()
-      dispatch(resetStatus())
+    }
+    return () => {
+      if (isCreateSuccess || isEditSuccess) dispatch(resetStatus())
     }
   }, [isCreateSuccess, onClose, isEditSuccess])
 

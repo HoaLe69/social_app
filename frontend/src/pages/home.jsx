@@ -4,10 +4,11 @@ import CreatePostModal from '@components/modals/create'
 import { memo } from 'react'
 import ChatFloat from '@components/chat-float/chat-float'
 import LayoutTab from '../layout/layout-tab'
+import { useSelector } from 'react-redux'
 
 const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
   return (
     <LayoutTab>
       <Box px={0}>
@@ -26,9 +27,9 @@ const Home = () => {
           <Avatar src={userLogin?.avatar} alt={userLogin?.displayName} />
           <Box textAlign={'left'} flex="1" height="40px" rounded="25px" px={4}>
             <Text lineHeight={'40px'} color={useColorModeValue('blackAlpha.700', 'whiteAlpha.700')} noOfLines={1}>
-              {userLogin?.displayName} let share your great moment to everyone
+              {userLogin?.displayName} Let share your great moment to everyone !
             </Text>
-            <CreatePostModal isOpen={isOpen} onClose={onClose} />
+            {isOpen && <CreatePostModal isOpen={isOpen} onClose={onClose} />}
           </Box>
         </Box>
         <PostContainer />

@@ -1,11 +1,7 @@
-import axios from 'axios'
 import {
   createPostStart,
   createPostSuccess,
   createPostFailed,
-  getAllPostStart,
-  getAllPostSuccess,
-  getAllPostFailed,
   deletePostSuccess,
   deletePostFailed,
   deletePostStart,
@@ -22,17 +18,15 @@ import {
   editPostSuccess,
   editPostFailed
 } from '../postSlice'
+import axiosClient from '../../config/axios'
 
 const baseUrl = process.env.REACT_APP_API_URL
 
 //create post
-export const createPost = async (dispatch, navigate, formData, accessToken) => {
+export const createPost = async (dispatch, navigate, formData) => {
   dispatch(createPostStart())
   try {
-    const res = await axios.post(`${baseUrl}/post/upload`, formData, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    console.log(res)
+    const res = await axiosClient.post(`/post/upload`, formData)
     dispatch(createPostSuccess(res))
   } catch (err) {
     console.log(err)
@@ -41,13 +35,10 @@ export const createPost = async (dispatch, navigate, formData, accessToken) => {
 }
 
 // edit post
-export const editPost = async (dispatch, formData, postId, cloudId, accessToken) => {
+export const editPost = async (dispatch, formData, postId, cloudId) => {
   dispatch(editPostStart())
   try {
-    const res = await axios.patch(`${baseUrl}/post/edit/${postId}/${cloudId}`, formData, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    console.log(res)
+    const res = await axiosClient.patch(`/post/edit/${postId}/${cloudId}`, formData)
     dispatch(editPostSuccess(res))
   } catch (err) {
     console.log(err)
@@ -55,31 +46,20 @@ export const editPost = async (dispatch, formData, postId, cloudId, accessToken)
   }
 }
 //get all post
-export const getAllPost = async (dispatch, accessToken, page, setHasmore) => {
-  dispatch(getAllPostStart())
+export const getAllPost = async page => {
   try {
-    const res = await axios.get(`${baseUrl}/post/all-post?page=${page}`, {
-      headers: {
-        Authorization: 'Bearer ' + accessToken
-      }
-    })
-    setHasmore(res.content.length > 0)
-    dispatch(getAllPostSuccess(res))
+    const res = await axiosClient.get(`/post/all-post?page=${page}`)
+    return res.content
   } catch (err) {
     console.log(err)
-    dispatch(getAllPostFailed())
   }
 }
 
 //deletePost
-export const deletePost = async (dispatch, id, cloudId, accessToken) => {
+export const deletePost = async (dispatch, id, cloudId) => {
   dispatch(deletePostStart())
   try {
-    await axios.delete(`${baseUrl}/post/delete/${id}/${cloudId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
+    await axiosClient.delete(`/post/delete/${id}/${cloudId}`)
     dispatch(deletePostSuccess(id))
   } catch (err) {
     dispatch(deletePostFailed())
@@ -87,14 +67,10 @@ export const deletePost = async (dispatch, id, cloudId, accessToken) => {
 }
 
 // get all post of user
-export const getAllPostUser = async (dispatch, id, accessToken) => {
+export const getAllPostUser = async (dispatch, id) => {
   dispatch(getPostUserStart())
   try {
-    const res = await axios.get(`${baseUrl}/post/all-post-user/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
+    const res = await axiosClient.get(`${baseUrl}/post/all-post-user/${id}`)
     dispatch(getPostUserSuccess(res))
   } catch (err) {
     console.log(err)
@@ -103,14 +79,10 @@ export const getAllPostUser = async (dispatch, id, accessToken) => {
 }
 
 // get  post by id
-export const getPostById = async (dispatch, id, accessToken) => {
+export const getPostById = async (dispatch, id) => {
   dispatch(getPostByIdStart())
   try {
-    const res = await axios.get(`${baseUrl}/post/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
+    const res = await axiosClient.get(`/post/${id}`)
     dispatch(getPostByIdSuccess(res))
   } catch (err) {
     console.log(err)
@@ -119,33 +91,18 @@ export const getPostById = async (dispatch, id, accessToken) => {
 }
 
 // react post
-export const reactPost = async (accessToken, postId, userId) => {
-  try {
-    axios.patch(
-      `${baseUrl}/post/react/${postId}/${userId}`,
-      {},
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    )
-  } catch (err) {
-    console.log(err)
-  }
+export const reactPost = async (postId, userId) => {
+  const res = axiosClient.patch(`/post/react/${postId}/${userId}`)
+  return res
 }
 
 // get all post from userFollowing
 // get list following
 
-export const getAllPostFromUserFollowing = async (dispatch, listIdUser, accessToken) => {
+export const getAllPostFromUserFollowing = async (dispatch, listIdUser) => {
   dispatch(getAllPostUserStart())
   try {
-    const res = await axios.post(
-      `${baseUrl}/post/all-post-user-following`,
-      { list: listIdUser },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    )
+    const res = await axiosClient.post(`${baseUrl}/post/all-post-user-following`, { list: listIdUser })
     dispatch(getAllPostUserSuccess(res))
   } catch (err) {
     console.log(err)

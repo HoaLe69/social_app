@@ -1,11 +1,11 @@
+import { useCallback, useEffect, useState } from 'react'
 import SockJS from 'sockjs-client'
 import * as Stomp from 'stompjs'
 
 const WebSocket = (setComments, setFilterDel = function () {}) => {
-  // const [stompClient, setStompClient] = useState(null);
   let stompClient = null
-  // const [message, setMessage] = useState({});
   const connect = (channel, id) => {
+    //TODO: replace the url on production
     const socket = new SockJS('http://localhost:8080/ws')
     const stomp = Stomp.over(socket)
     stompClient = stomp
@@ -13,6 +13,7 @@ const WebSocket = (setComments, setFilterDel = function () {}) => {
       console.log('Connected', frame)
       stomp.subscribe(`/topic/${channel}/${id}`, message => {
         const messageRes = JSON.parse(message.body)
+        console.log({ messageRes })
         if (messageRes.body.message) {
           setFilterDel(messageRes.body)
         } else {
@@ -46,6 +47,56 @@ const WebSocket = (setComments, setFilterDel = function () {}) => {
     if (stompClient) stompClient.disconnect()
   }
   return { sendMessage, disconnect, connect }
+}
+
+export const useStompClient = (topic, onMessageReceived) => {
+  const [client, setClient] = useState(null)
+  const [isConnected, setIsConnected] = useState(false)
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws')
+    const stompClient = Stomp.over(socket)
+
+    // disable console debug logs if not needed
+    //    stompClient.debug = null
+
+    stompClient.connect(
+      {},
+      () => {
+        setIsConnected(true)
+        stompClient.subscribe(topic, message => {
+          if (onMessageReceived) {
+            onMessageReceived(JSON.parse(message.body))
+          }
+        })
+      },
+      error => {
+        console.log('Connection error: ', error)
+      }
+    )
+
+    setClient(stompClient)
+
+    //Cleanup on unmount
+    return () => {
+      if (stompClient.connected) {
+        stompClient.disconnect()
+      }
+    }
+  }, [topic, onMessageReceived])
+
+  const sendMessage = useCallback(
+    (destination, message) => {
+      if (client && isConnected) {
+        client.send(destination, {}, JSON.stringify(message))
+      } else {
+        console.warn('Client is not connected')
+      }
+    },
+    [client, isConnected]
+  )
+
+  return { sendMessage, isConnected }
 }
 
 export default WebSocket

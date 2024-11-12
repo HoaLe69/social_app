@@ -6,20 +6,17 @@ export const postSlice = createSlice({
     currentPostInfor: {
       post: {}
     },
-    allPost: {
-      isFetching: false,
-      error: false,
-      posts: []
-    },
     createPost: {
       isFetching: false,
       error: false,
-      success: false
+      success: false,
+      post: null
     },
     deletePost: {
       isFetching: false,
       success: false,
-      error: false
+      error: false,
+      id: null
     },
     getPostUser: {
       isFetching: false,
@@ -39,13 +36,17 @@ export const postSlice = createSlice({
     editPost: {
       isFetching: false,
       error: false,
-      success: false
+      success: false,
+      post: null
     }
   },
   reducers: {
     resetStatus: state => {
       state.createPost.success = false
       state.editPost.success = false
+    },
+    editPostCleanOldState: state => {
+      state.editPost.post = null
     },
     editPostStart: state => {
       state.editPost.isFetching = true
@@ -54,9 +55,7 @@ export const postSlice = createSlice({
       state.editPost.error = false
       state.editPost.isFetching = false
       state.editPost.success = true
-      const index = state.allPost.posts.findIndex(post => post.id === action.payload.id)
-
-      const newList = [...state.allPost.posts.splice(index, 1, action.payload)]
+      state.editPost.post = action.payload
     },
     editPostFailed: state => {
       state.editPost.error = true
@@ -65,20 +64,6 @@ export const postSlice = createSlice({
     },
     getCurrentPostInfor: (state, action) => {
       state.currentPostInfor.post = action.payload
-    },
-    getAllPostStart: state => {
-      state.allPost.isFetching = true
-    },
-    getAllPostSuccess: (state, action) => {
-      state.allPost.isFetching = false
-      state.allPost.error = false
-      state.allPost.posts = [
-        ...new Set([...state.allPost.posts, ...action.payload.content, { page: action.payload.number }])
-      ]
-    },
-    getAllPostFailed: state => {
-      state.allPost.error = true
-      state.allPost.isFetching = false
     },
     getAllPostUserStart: state => {
       state.allPostFromUser.isFetching = true
@@ -97,12 +82,15 @@ export const postSlice = createSlice({
     },
     createPostSuccess: (state, action) => {
       state.createPost.isFetching = false
-      state.allPost.posts = [action.payload, ...state.allPost.posts]
       state.createPost.success = true
+      state.createPost.post = action.payload
     },
     createPostFailed: state => {
       state.createPost.error = true
       state.createPost.isFetching = false
+    },
+    createPostCleanOldState: state => {
+      state.createPost.post = null
     },
     deletePostStart: state => {
       state.deletePost.isFetching = true
@@ -110,12 +98,16 @@ export const postSlice = createSlice({
     deletePostSuccess: (state, action) => {
       state.deletePost.isFetching = false
       state.deletePost.error = false
-      state.allPost.posts = [...state.allPost.posts.filter(post => post.id !== action.payload)]
+      state.deletePost.id = action.payload
     },
     deletePostFailed: state => {
       state.deletePost.error = true
       state.deletePost.isFetching = false
     },
+    deletePostCleanOldState: state => {
+      state.deletePost.id = null
+    },
+
     getPostUserStart: state => {
       state.getPostUser.isFetching = true
     },
@@ -148,19 +140,19 @@ export const {
   editPostStart,
   editPostFailed,
   editPostSuccess,
+  editPostCleanOldState,
   getAllPostUserStart,
   getAllPostUserFailed,
   getAllPostUserSuccess,
   getCurrentPostInfor,
-  getAllPostStart,
-  getAllPostFailed,
-  getAllPostSuccess,
   createPostStart,
   createPostSuccess,
   createPostFailed,
+  createPostCleanOldState,
   deletePostStart,
   deletePostFailed,
   deletePostSuccess,
+  deletePostCleanOldState,
   getPostUserStart,
   getPostUserFalied,
   getPostUserSuccess,

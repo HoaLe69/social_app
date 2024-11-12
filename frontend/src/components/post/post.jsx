@@ -14,76 +14,34 @@ import {
 import { Link as ReactRouterLink } from 'react-router-dom'
 import MenuPost from '../menu-post'
 import { AiOutlineHeart, AiFillHeart, AiOutlineMessage } from 'react-icons/ai'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getCurrentPostInfor } from '@redux/postSlice'
 import FeedModal from '../modals/feed'
 import { reactPost } from '@redux/api-request/posts'
-import { forwardRef, useState, memo, useRef, useEffect } from 'react'
+import { forwardRef, useState, memo, useRef, useEffect, useCallback } from 'react'
 import formatTime from '../../util/timeago'
+import { deletePost } from '../../redux/api-request/posts'
+import { useToast } from '@chakra-ui/react'
 
 const Post = forwardRef((props, ref) => {
-  const {
-    id,
-    userId,
-    cloudinaryId,
-    photoUrl,
-    displayName,
-    description,
-    thumbnail,
-    like,
-    tag,
-    comments,
-    createAt,
-    isDetail
-  } = props
+  const { isFullPost, ...postInfo } = props
+  const toast = useToast()
 
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
   const [numberOfLines, setNumberOfLines] = useState(0)
   // paragraph ref
   const pRef = useRef()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const [isLiked, setIsLike] = useState(() => (like ? like?.includes(userLogin?.id) : false))
-  const [liked, setLiked] = useState(like || [])
+  const [activeEmojiButton, setActiveEmojiButton] = useState(() =>
+    postInfo.like ? postInfo.like?.includes(userLogin?.id) : false
+  )
+  const [liked, setLiked] = useState(postInfo.like || [])
   const dispatch = useDispatch()
 
-  const handleOnClickLike = () => {
-    if (userLogin?.accessToken && id) {
-      reactPost(userLogin?.accessToken, id, userLogin?.id)
-    }
-    if (isLiked) {
-      setLiked([...liked].filter(likerId => likerId !== userLogin?.id))
-    } else setLiked([...liked, userLogin?.id])
-    setIsLike(!isLiked)
-  }
-  const handleShowFullPost = () => {
-    dispatch(
-      getCurrentPostInfor({
-        id,
-        userId,
-        cloudId: cloudinaryId,
-        photoUrl,
-        tag,
-        displayName,
-        description,
-        thumbnail,
-        like: liked,
-        comments,
-        createAt,
-        isDetail
-      })
-    )
-  }
   const colorReact = useColorModeValue('#1a202c', '#ffffff')
-  const showRectPost = () => {
-    const quantity = liked?.length
-    if (quantity === 0) return '0'
-    else {
-      if (quantity === 1 && isLiked) return 'you'
-      else if (isLiked) return `you and ${quantity - 1} other`
-      return `${quantity} other`
-    }
-  }
   const bgPost = useColorModeValue('whiteAlpha.700', 'whiteAlpha.200')
+
+  const amountOfComment = useSelector(state => state.comment.amountCommentCurrPost)
 
   useEffect(() => {
     if (pRef.current) {
@@ -94,43 +52,86 @@ const Post = forwardRef((props, ref) => {
     }
   }, [])
 
+  const showRectPost = useCallback(() => {
+    const quantity = liked?.length
+    if (quantity === 0) return '0'
+    else {
+      if (quantity === 1 && activeEmojiButton) return 'you'
+      else if (activeEmojiButton) return `you and ${quantity - 1} other`
+      return `${quantity} other`
+    }
+  }, [liked])
+
+  const handleOnClickLike = async () => {
+    try {
+      await reactPost(postInfo.id, userLogin?.id)
+      if (activeEmojiButton) {
+        setLiked([...liked].filter(likerId => likerId !== userLogin?.id))
+      } else setLiked([...liked, userLogin?.id])
+      setActiveEmojiButton(!activeEmojiButton)
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'Post',
+        position: 'bottom-left',
+        description: error.response.data || 'Something went wrong',
+        status: 'info',
+        duration: 1500,
+        isClosable: true
+      })
+    }
+  }
+  const handleShowFullPost = () => {
+    dispatch(
+      getCurrentPostInfor({
+        ...postInfo,
+        like: liked
+      })
+    )
+  }
+
   const handleReadMorePost = () => {
     handleShowFullPost()
     onOpen()
   }
+
+  const handleDeletePost = useCallback(() => {
+    deletePost(dispatch, postInfo.id, postInfo.cloudinaryId)
+  }, [])
+
   return (
-    <Box mb={4} ref={ref} bg={isDetail ? 'none' : bgPost} rounded="10px">
+    <Box mb={4} ref={ref} bg={isFullPost ? 'none' : bgPost} rounded="10px">
       <HStack as="header" p={2} display="flex">
         <Link
           as={ReactRouterLink}
-          to={`/profile/${userId}`}
+          to={`/profile/${postInfo.userId}`}
           _hover={{ textDecoration: 'none' }}
           display="flex"
           alignItems="center"
           gap="5px"
         >
-          <Avatar src={photoUrl} size="md" />
+          <Avatar src={postInfo.photoUrl} size="md" />
           <Box>
             <Heading as="h3" fontSize="15px">
-              {displayName}
+              {postInfo.displayName}
             </Heading>
             <Text fontSize="12px" textAlign={'left'} color={useColorModeValue('blackAlpha.600', 'whiteAlpha.500')}>
-              {formatTime(createAt)}
+              {formatTime(postInfo.createAt)}
             </Text>
           </Box>
         </Link>
-        {userId === userLogin?.id && (
+        {postInfo.userId === userLogin?.id && (
           <Box ml="auto">
-            <MenuPost inforPost={props} id={id} cloudId={cloudinaryId} />
+            <MenuPost onDelete={handleDeletePost} postInfo={postInfo} />
           </Box>
         )}
       </HStack>
       <Box pl={2}>
-        <Text ref={pRef} textAlign="left" noOfLines={numberOfLines >= 3 && !isDetail ? '3' : 'none'}>
-          {description}
+        <Text ref={pRef} textAlign="left" noOfLines={numberOfLines >= 3 && !isFullPost ? '3' : 'none'}>
+          {postInfo.description}
         </Text>
       </Box>
-      <Box display={numberOfLines >= 3 && !isDetail ? 'block' : 'none'} textAlign="left" pl={2}>
+      <Box display={numberOfLines >= 3 && !isFullPost ? 'block' : 'none'} textAlign="left" pl={2}>
         <Text
           onClick={handleReadMorePost}
           cursor="pointer"
@@ -142,17 +143,17 @@ const Post = forwardRef((props, ref) => {
         </Text>
       </Box>
       <Box pb={2} pl={2} textAlign="left">
-        {tag && <Badge colorScheme="red">{tag}</Badge>}
+        {postInfo?.tag && <Badge colorScheme="red">{postInfo.tag}</Badge>}
       </Box>
-      {thumbnail && (
+      {postInfo?.thumbnail && (
         <Box overflow={'hidden'}>
           <Image
             loading="lazy"
             minH="400px"
             maxH="600px"
             w="full"
-            src={thumbnail}
-            alt={displayName}
+            src={postInfo.thumbnail}
+            alt={postInfo.displayName}
             objectFit={'cover'}
           />
         </Box>
@@ -171,7 +172,7 @@ const Post = forwardRef((props, ref) => {
           <Text lineHeight={1}>{showRectPost()}</Text>
         </Box>
         <Box>
-          <Text>{comments} comments</Text>
+          <Text>{amountOfComment || postInfo.comments} comments</Text>
         </Box>
       </Flex>
       <Flex
@@ -192,14 +193,14 @@ const Post = forwardRef((props, ref) => {
           _hover={{ bg: useColorModeValue('whiteAlpha.500', 'whiteAlpha.200') }}
           cursor="pointer"
           onClick={handleOnClickLike}
-          color={isLiked ? 'pink.400' : colorReact}
+          color={activeEmojiButton ? 'pink.400' : colorReact}
         >
           <Box lineHeight={1}>
             <AiOutlineHeart />
           </Box>
           Like
         </Flex>
-        <Box flex={1} pointerEvents={isDetail && 'none'} onClick={handleShowFullPost}>
+        <Box flex={1} pointerEvents={isFullPost && 'none'} onClick={handleShowFullPost}>
           <Flex
             onClick={onOpen}
             cursor="pointer"
@@ -216,7 +217,7 @@ const Post = forwardRef((props, ref) => {
             <AiOutlineMessage />
             Comments
           </Flex>
-          <FeedModal isOpen={isOpen} onClose={onClose} />
+          {isOpen && <FeedModal isOpen={isOpen} onClose={onClose} />}
         </Box>
       </Flex>
     </Box>

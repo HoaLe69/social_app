@@ -26,7 +26,7 @@ const MakePost = ({ postDataEditMode }) => {
   const isLoading = useSelector(state => state.post.createPost.isFetching)
   const isLoadingEdit = useSelector(state => state.post.editPost.isFetching)
   const [previewSource, setPreviewSource] = useState(postDataEditMode?.thumbnail || undefined)
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
   const [err, setErr] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
 
@@ -155,7 +155,7 @@ const MakePost = ({ postDataEditMode }) => {
         >
           {postDataEditMode ? 'Change' : 'Upload'}
           <MdOutlineCloudUpload />
-          <Input id="input-file" type="file" name="image" display="none" onChange={handleOnChange} />
+          <Input id="input-file" type="file" accept="image/*" name="image" display="none" onChange={handleOnChange} />
         </FormLabel>
         <Box display="flex" justifyContent="center">
           <Image src={previewSource} boxSize="xs" objectFit="cover" />

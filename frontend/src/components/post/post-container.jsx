@@ -1,35 +1,99 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Button } from '@chakra-ui/react'
 import { BeatLoader } from 'react-spinners'
 import Post from './post'
 import { getAllPost } from '@redux/api-request/posts'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
-import useInfinity from '../../hooks/useInfinityScroll'
+import { memo, useCallback, useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import { createPostCleanOldState, deletePostCleanOldState, editPostCleanOldState } from '../../redux/postSlice'
 
 const PostContainer = () => {
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [posts, setPosts] = useState([])
+  const [page, setPage] = useState(0)
   const dispatch = useDispatch()
-  const { page, lastPostRef, setHasmore } = useInfinity()
-  const posts = useSelector(state => state.post.allPost.posts)
-  const isLoading = useSelector(state => state.post.allPost.isFetching)
-  const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
+  const { ref, inView } = useInView()
+
+  const postDeletedId = useSelector(state => state.post.deletePost.id)
+  const postEdited = useSelector(state => state.post.editPost.post)
+  const postCreated = useSelector(state => state.post.createPost.post)
+
+  const fetchPost = useCallback(async () => {
+    if (loading || !hasMore) return
+    try {
+      setLoading(true)
+      const response = await getAllPost(page)
+      if (!response.length) {
+        setHasMore(false)
+        return
+      }
+      setPosts(pre => [...pre, ...response])
+      setPage(pre => pre + 1)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, hasMore])
+
   useEffect(() => {
-    if (page < posts[posts.length - 1]?.page) return
-    getAllPost(dispatch, accessToken, page, setHasmore)
-  }, [page, accessToken, setHasmore, dispatch])
+    if (inView) {
+      fetchPost()
+    }
+  }, [inView])
+  const handleRefreshPost = useCallback(() => {
+    //todo
+  }, [])
+
+  useEffect(() => {
+    if (!postDeletedId) return
+    setPosts(pre => {
+      const filter = pre.filter(post => post.id !== postDeletedId)
+      return filter
+    })
+    return () => {
+      if (postDeletedId) dispatch(deletePostCleanOldState())
+    }
+  }, [postDeletedId])
+
+  useEffect(() => {
+    if (!postEdited) return
+    setPosts(pre => {
+      const changed = pre.map(post => {
+        if (post.id === postEdited.id) {
+          return postEdited
+        }
+        return post
+      })
+      return changed
+    })
+    return () => {
+      //todo
+      if (postEdited) dispatch(editPostCleanOldState())
+    }
+  }, [postEdited])
+
+  useEffect(() => {
+    if (!postCreated) return
+    setPosts(pre => [postCreated, ...pre])
+    return () => {
+      //todo
+      if (postCreated) dispatch(createPostCleanOldState())
+    }
+  }, [postCreated])
+
   return (
     <Box pt={4}>
-      {posts?.map(function (post, index) {
-        if (post.page >= 0) return null
-        if (posts.length - 1 === index + 1) {
-          return <Post key={post.id} ref={lastPostRef} {...post} />
-        }
+      {posts?.map(function (post) {
         return <Post key={post.id} {...post} />
       })}
-      <Box pt={2} display="flex" justifyContent="center">
-        {isLoading && <BeatLoader color="white" />}
+      <Box pt={2} ref={ref} display="flex" justifyContent="center">
+        {loading && <BeatLoader color="white" />}
       </Box>
+      <Button onClick={handleRefreshPost}>Refresh</Button>
     </Box>
   )
 }
 
-export default PostContainer
+export default memo(PostContainer)

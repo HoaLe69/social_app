@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin("http://localhost:3000")
 @RequestMapping(value = "/api/post")
 public class PostController {
   @Autowired
@@ -132,7 +132,7 @@ public class PostController {
       postRepository.save(post);
       return ResponseEntity.ok("ok");
     }
-    return ResponseEntity.badRequest().body("post is not exit");
+    return ResponseEntity.badRequest().body("This post removed by owner");
   }
 
 }

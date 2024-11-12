@@ -1,43 +1,38 @@
 import { InputGroup, useColorModeValue, Input, InputRightElement, Box, Badge } from '@chakra-ui/react'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { BsFillSendFill } from 'react-icons/bs'
 import { FaRegSmile } from 'react-icons/fa'
+import { useSelector } from 'react-redux'
 import { EmojiKeyboard } from 'reactjs-emoji-keyboard'
-import { v4 as uuid } from 'uuid'
 
-const InputComment = ({ postId, sendMessage, id: commentId, replyId, displayName }) => {
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const [commentValue, setCommentValue] = useState('')
+const InputComment = ({ postId, sendMessage, isRoot }) => {
   const refInput = useRef()
+  const userLogin = useSelector(state => state.auth.authState.user)
+  const [commentValue, setCommentValue] = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
-  const handleSendMessage = () => {
+
+  const handleSendMessage = useCallback(() => {
+    if (!commentValue.trim()) return
     const message = {
+      action: 'ADD',
       userId: userLogin?.id,
       postId: postId,
       avatar: userLogin?.avatar,
       displayName: userLogin?.displayName,
-      content: commentValue
+      content: commentValue,
+      level: isRoot ? 'root' : 'child'
     }
-    if (postId && userLogin?.id && commentValue.trim().length > 0) {
-      if (commentId) {
-        const subCommentId = uuid()
-        sendMessage(
-          {
-            ...message,
-            id: commentId,
-            replyId: replyId,
-            subCommentId: subCommentId
-          },
-          'comments',
-          postId
-        )
-      } else {
-        sendMessage(message, 'comments', postId)
-      }
-      setCommentValue('')
-      refInput?.current.focus()
-    }
-  }
+    // if (reply) {
+    //   message.root = reply.root
+    //   message.replyTo = reply.to
+    // }
+    sendMessage(`/app/comments/${postId}`, message)
+    setCommentValue('')
+    setTimeout(() => {
+      const inputEl = refInput.current
+      if (inputEl) inputEl.focus()
+    }, 0)
+  }, [commentValue])
 
   const handleKeydown = e => {
     if (e.key === 'Enter') handleSendMessage()
@@ -49,13 +44,13 @@ const InputComment = ({ postId, sendMessage, id: commentId, replyId, displayName
   }
   return (
     <InputGroup position="relative" display="flex" alignItems="center" onClick={handleHideEmojiKeyboard} px={2}>
-      {displayName && (
-        <Box>
-          <Badge variant="solid" colorScheme="teal">
-            {displayName}
-          </Badge>
-        </Box>
-      )}
+      {/* {reply && ( */}
+      {/*   <Box> */}
+      {/*     <Badge variant="solid" colorScheme="teal"> */}
+      {/*       {reply?.displayName} */}
+      {/*     </Badge> */}
+      {/*   </Box> */}
+      {/* )} */}
       <Input
         flex="1"
         ref={refInput}
@@ -63,7 +58,8 @@ const InputComment = ({ postId, sendMessage, id: commentId, replyId, displayName
         pr={20}
         variant="flushed"
         focusBorderColor="grassTeal"
-        placeholder={displayName ? `reply ${displayName}` : 'Enter you comment..'}
+        placeholder="Enter your comment..."
+        //        placeholder={reply?.displayName ? `reply to ${reply?.displayName}` : 'Enter you comment..'}
         name="comment"
         value={commentValue}
         onChange={e => setCommentValue(e.target.value)}
