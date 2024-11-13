@@ -1,27 +1,28 @@
 import { Input, Box, InputGroup, InputRightElement, useColorModeValue } from '@chakra-ui/react'
 import { BsFillSendFill } from 'react-icons/bs'
 import { FaRegSmile } from 'react-icons/fa'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { EmojiKeyboard } from 'reactjs-emoji-keyboard'
+import { useSelector } from 'react-redux'
 
 const InputRoomChat = ({ roomId, sendMessage }) => {
   const [content, setContent] = useState('')
   const inputRef = useRef(null)
   const [showEmoji, setShowEmoji] = useState(false)
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
 
-  const handleSendMessage = () => {
-    const infor = {
+  const handleSendMessage = useCallback(() => {
+    console.log({ roomId })
+    if (!content.trim() || !roomId) return
+    const message = {
       userId: userLogin?.id,
       conversationId: roomId,
       content: content
     }
-    if (roomId && content?.trim().length > 0) {
-      sendMessage(infor, 'messages', roomId)
-      setContent('')
-      inputRef?.current.focus()
-    }
-  }
+    sendMessage(`/app/messages/${roomId}`, message)
+    setContent('')
+    inputRef?.current.focus()
+  }, [content])
   const handleKeydown = e => {
     if (e.key === 'Enter') handleSendMessage()
   }

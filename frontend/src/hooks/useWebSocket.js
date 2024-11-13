@@ -49,11 +49,12 @@ const WebSocket = (setComments, setFilterDel = function () {}) => {
   return { sendMessage, disconnect, connect }
 }
 
-export const useStompClient = (topic, onMessageReceived) => {
+export const useStompClient = (topic, id, onMessageReceived) => {
   const [client, setClient] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
+    if (!id) return
     const socket = new SockJS('http://localhost:8080/ws')
     const stompClient = Stomp.over(socket)
 
@@ -64,7 +65,7 @@ export const useStompClient = (topic, onMessageReceived) => {
       {},
       () => {
         setIsConnected(true)
-        stompClient.subscribe(topic, message => {
+        stompClient.subscribe(`${topic}/${id}`, message => {
           if (onMessageReceived) {
             onMessageReceived(JSON.parse(message.body))
           }
@@ -83,7 +84,7 @@ export const useStompClient = (topic, onMessageReceived) => {
         stompClient.disconnect()
       }
     }
-  }, [topic, onMessageReceived])
+  }, [id, onMessageReceived])
 
   const sendMessage = useCallback(
     (destination, message) => {

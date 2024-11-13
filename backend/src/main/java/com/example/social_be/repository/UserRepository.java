@@ -15,4 +15,7 @@ public interface UserRepository extends MongoRepository<UserCollection, String> 
 
   @Query("{ displayName : { $regex : ?0 } }")
   List<UserCollection> findByLikeUserName(String name);
+
+  @Query("{ email : { $regex : ?0 } }")
+  List<UserCollection> findByLikeEmail(String email);
 }

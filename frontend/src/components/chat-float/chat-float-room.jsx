@@ -1,61 +1,54 @@
-import { Text, Avatar, Box, Flex, Heading, IconButton, Link, useColorModeValue } from '@chakra-ui/react'
+import { Text, Avatar, Box, Flex, Heading, IconButton, Link, useColorModeValue, Spinner } from '@chakra-ui/react'
 import { IoMdClose } from 'react-icons/io'
 import { COLOR_THEME } from '../../constant'
 import InputRoomChat from '../conversation/input-mess'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import axios from 'axios'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import Message from '../conversation/message'
-import WebSocket from '../../hooks/useWebSocket'
+import { useStompClient } from '../../hooks/useWebSocket'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { closeRoomFloat } from '../../redux/conversationSlice'
+import axiosClient from '../../config/axios'
 
-const ChatFloatRoom = ({ receiver, roomId }) => {
+const ChatFloatRoom = ({ room, receiver }) => {
   const dispatch = useDispatch()
   const refDiv = useRef()
   const [messages, setMessages] = useState([])
-  const [filterMess, setfilterMess] = useState({ message: '' })
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const baseUrl = process.env.REACT_APP_API_URL
-  const { sendMessage, connect, disconnect } = useMemo(() => WebSocket(setMessages, setfilterMess), [])
-  useEffect(() => {
-    if (roomId) connect('messages', roomId)
+  const [loading, setLoading] = useState(null)
+
+  //  const userLogin = useSelector(state => state.auth.authState.user)
+
+  const handleIncomingMessage = useCallback(message => {
+    setMessages(pre => [message.body, ...pre])
+  }, [])
+
+  const { sendMessage } = useStompClient('/topic/messages', room?.id, handleIncomingMessage)
+
+  const handleOnClickCloseRoom = useCallback(() => {
+    dispatch(closeRoomFloat(room?.id))
+  }, [room])
+
+  const loadMessageHistory = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await axiosClient.get(`/message/all/${room?.id}`)
+      setMessages(pre => [...pre, ...res])
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
-    if (filterMess.message) {
-      const messRecallIndex = messages.findIndex(el => el.id === filterMess.message)
-      if (messRecallIndex !== -1) {
-        const newListMessage = messages
-        newListMessage[messRecallIndex] = {
-          ...newListMessage[messRecallIndex],
-          content: ''
-        }
-        setMessages([...newListMessage])
-      }
-    }
-  }, [filterMess.message])
+    if (room?.id) loadMessageHistory()
+  }, [room?.id])
 
   useEffect(() => {
-    const getMessages = async () => {
-      try {
-        const res = await axios.get(`${baseUrl}/message/all/${roomId}`, {
-          headers: { Authorization: `Bearer ${userLogin.accessToken}` }
-        })
-        setMessages(res)
-      } catch (err) {
-        console.log(err)
-      }
+    const containerEl = refDiv.current
+    if (containerEl) {
+      containerEl.scrollTop = containerEl.scrollHeight
     }
-    if (roomId) getMessages()
-  }, [roomId, baseUrl, userLogin.accessToken])
-  const handleOnClickCloseRoom = () => {
-    dispatch(closeRoomFloat(roomId))
-    if (roomId) disconnect()
-  }
-
-  useEffect(() => {
-    if (refDiv.current) refDiv.current.scrollTop = refDiv.current.scrollHeight
   }, [messages])
   return (
     <Box
@@ -93,25 +86,19 @@ const ChatFloatRoom = ({ receiver, roomId }) => {
             <Avatar src={receiver?.avatar} size="md" alt={receiver?.displayName} />
             <Text color="gray.500">Let chat with {receiver?.displayName}</Text>
           </Box>
-          <Box>
+          <Box width="full" display="flex" alignItems="center" justifyContent="center">
+            {loading && <Spinner />}
+          </Box>
+          <Box display="flex" flexDirection="column-reverse">
             {messages?.map((message, index) => {
-              return (
-                <Message
-                  {...message}
-                  avatar={receiver?.avatar}
-                  key={message?.id || index}
-                  roomId={roomId}
-                  sendMessage={sendMessage}
-                  isFloat
-                />
-              )
+              return <Message {...message} receiver={receiver} key={message?.id || index} roomId={room?.id} isFloat />
             })}
           </Box>
         </Box>
-        <InputRoomChat roomId={roomId} sendMessage={sendMessage} />
+        <InputRoomChat roomId={room?.id} sendMessage={sendMessage} />
       </Box>
     </Box>
   )
 }
 
-export default ChatFloatRoom
+export default memo(ChatFloatRoom)

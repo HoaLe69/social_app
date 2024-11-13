@@ -1,27 +1,25 @@
 import { useColorModeValue, Heading, Text, Flex, Box, Avatar, Link } from '@chakra-ui/react'
 import WrapContent from '@components/common/wrap-content'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getAllRoomConversation } from '@redux/api-request/room'
-import useFetchData from '../../hooks/useFetchData'
 import { chooseRoomFloat } from '@redux/conversationSlice'
 import { Link as ReactRouterLink } from 'react-router-dom'
+import axiosClient from '../../config/axios'
 
-const RoomsHome = () => {
+const ListConversation = () => {
   const dispatch = useDispatch()
-  const userLogin = JSON.parse(localStorage.getItem('user'))
+  const userLogin = useSelector(state => state.auth.authState.user)
   const rooms = useSelector(state => state.room.getAllRoomConversation.rooms)
   useEffect(() => {
-    if (userLogin?.accessToken) {
-      getAllRoomConversation(dispatch, userLogin.accessToken, userLogin?.id)
+    if (userLogin?.id) {
+      getAllRoomConversation(dispatch, userLogin?.id)
     }
-  }, [userLogin?.accessToken, dispatch, userLogin?.id])
+  }, [userLogin])
   return (
     <WrapContent title="Messages">
       {rooms?.map((room, index) => {
-        return (
-          <Room accessToken={userLogin?.accessToken} senderId={userLogin?.id} key={room?.id || index} room={room} />
-        )
+        return <Conversation senderId={userLogin?.id} key={room?.id || index} room={room} />
       })}
       <Link as={ReactRouterLink} to="/chat">
         <Text textAlign="center" color={useColorModeValue('blue.500', 'pink.400')}>
@@ -32,15 +30,31 @@ const RoomsHome = () => {
   )
 }
 
-const Room = ({ accessToken, room, senderId }) => {
+const Conversation = ({ room, senderId }) => {
+  const [receiver, setReceiver] = useState()
   const dispatch = useDispatch()
-  const [receiveId] = room?.member.filter(memberId => memberId !== senderId)
 
-  const url = `${process.env.REACT_APP_API_URL}/user/${receiveId}`
-  const { apiData: receiver } = useFetchData(url, accessToken)
-  const handleSelectRoom = () => {
-    dispatch(chooseRoomFloat({ roomId: room?.id, receiver: { ...receiver } }))
-  }
+  const receiverId = useMemo(() => {
+    return room?.member.find(m => m !== senderId)
+  }, [room])
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        const user = await axiosClient.get(`/user/${receiverId}`)
+        setReceiver(user)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (receiverId) {
+      loadUserProfile()
+    }
+  }, [receiverId])
+
+  const handleSelectRoom = useCallback(() => {
+    dispatch(chooseRoomFloat({ info: room, receiver }))
+  }, [receiver])
   return (
     <Flex
       onClick={handleSelectRoom}
@@ -64,4 +78,4 @@ const Room = ({ accessToken, room, senderId }) => {
   )
 }
 
-export default RoomsHome
+export default ListConversation

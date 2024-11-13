@@ -27,8 +27,8 @@ public class ConversationController {
   public ResponseEntity<?> createConversation(@RequestBody ConversationRequest conversationRequest) {
     try {
       ConversationCollection conversationCollection = new ConversationCollection(conversationRequest.getMember());
-      conversationRepository.save(conversationCollection);
-      return ResponseEntity.ok(conversationCollection);
+      ConversationCollection savedConversation = conversationRepository.save(conversationCollection);
+      return ResponseEntity.ok(savedConversation);
     } catch (Exception ex) {
       return ResponseEntity.badRequest().body(new MessageResponse("Something wrong"));
     }
@@ -38,7 +38,7 @@ public class ConversationController {
   public ResponseEntity<?> findConversation(@PathVariable String senderId, @PathVariable String receiveId) {
     Query query = new Query();
     query.addCriteria(Criteria.where("member").all(senderId, receiveId));
-    List<ConversationCollection> result = mongoTemplate.find(query, ConversationCollection.class, "room");
+    ConversationCollection result = mongoTemplate.findOne(query, ConversationCollection.class, "room");
     return ResponseEntity.ok(result);
   }
 

@@ -46,8 +46,8 @@ public class UserController {
   private CommentRepository commentRepository;
 
   @GetMapping("/search")
-  public ResponseEntity<?> searchUser(@RequestParam String name) {
-    return ResponseEntity.ok(userRepository.findByLikeUserName(name).stream().limit(3));
+  public ResponseEntity<?> searchUser(@RequestParam String email) {
+    return ResponseEntity.ok(userRepository.findByLikeEmail(email).stream().limit(3));
   }
 
   @GetMapping("/verify")

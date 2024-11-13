@@ -20,7 +20,7 @@ import Notify from '../notify/notify'
 import { BiLogOut } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import RoomsHome from '../chat-float/room-float'
+import ListConversation from '../chat-float/room-float'
 import axiosClient from '../../config/axios'
 import { useSelector } from 'react-redux'
 
@@ -69,7 +69,7 @@ const NavMenuPc = () => {
         </Tooltip>
         <MenuList bg={COLOR_THEME.BG} width={'md'} maxH="60vh">
           <Box>
-            <RoomsHome />
+            <ListConversation />
           </Box>
         </MenuList>
       </Menu>

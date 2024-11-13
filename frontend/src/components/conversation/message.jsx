@@ -12,59 +12,36 @@ import {
 } from '@chakra-ui/react'
 import formatTime from '../../util/timeago'
 import { BsThreeDots } from 'react-icons/bs'
-import axios from 'axios'
+import { useSelector } from 'react-redux'
+import { memo } from 'react'
 
-const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, sendMessage, roomId }) => {
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const baseUrl = process.env.REACT_APP_API_URL
-  const handleRecallMessage = async () => {
-    if (roomId && id) {
-      sendMessage(
-        {
-          deleteMessage: 1,
-          id: id
-        },
-        'messages',
-        roomId
-      )
-      try {
-        await axios.patch(
-          `${baseUrl}/message/recall/${id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${userLogin?.accessToken}`
-            }
-          }
-        )
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  }
+const WrapMessage = ({ children, isMyMess }) => {
+  return (
+    <Box>
+      {!isMyMess ? (
+        <Flex gap="5px" align="end" mt={3}>
+          {children}
+        </Flex>
+      ) : (
+        <Flex gap="5px" align="end" mt={3} justifyContent="end" flexDir="row-reverse">
+          {children}
+        </Flex>
+      )}
+    </Box>
+  )
+}
 
-  const WrapMessage = ({ children, isMyMess }) => {
-    return (
-      <Box>
-        {!isMyMess ? (
-          <Flex gap="5px" align="end" mt={3}>
-            {children}
-          </Flex>
-        ) : (
-          <Flex gap="5px" align="end" mt={3} justifyContent="end" flexDir="row-reverse">
-            {children}
-          </Flex>
-        )}
-      </Box>
-    )
-  }
+const Message = ({ isFloat, receiver, ...message }) => {
+  const userLogin = useSelector(state => state.auth.authState.user)
+  const handleRecallMessage = async () => {}
+
   const inactive = useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')
-  const isMyMess = userLogin?.id === userId
+  const isMyMess = userLogin?.id === message?.userId
   const colorRecall = useColorModeValue('blackAlpha.700', 'whiteAlpha.500')
   return (
     <WrapMessage isMyMess={isMyMess}>
       <Box display="flex" gap="5px" maxW={isFloat ? '70%' : '60%'}>
-        {!isMyMess && <Avatar src={avatar} alt={displayName} size="sm" />}
+        {!isMyMess && <Avatar src={receiver?.avatar} alt={receiver?.displayName} size="sm" />}
         <Box display="flex" flexDir="column" alignItems={isMyMess ? 'flex-end' : 'flex-start'}>
           <Box
             position="relative"
@@ -82,9 +59,9 @@ const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, 
               backgroundColor: 'transparent'
             }}
           >
-            {content?.length > 0 ? (
+            {message?.content?.length > 0 ? (
               <Box bg={isMyMess ? 'grassTeal' : inactive} p={1} px={2} borderRadius="10px" maxW="max-content">
-                <Text fontSize="16px">{content}</Text>
+                <Text fontSize="16px">{message?.content}</Text>
               </Box>
             ) : (
               <Box fontSize="16px" p={2} border="1px" rounded="25px" color={colorRecall}>
@@ -96,7 +73,7 @@ const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, 
               left={!isMyMess ? '104%' : 'unset'}
               position="absolute"
               top="0"
-              display={content?.length > 0 && userId === userLogin?.id ? 'flex' : 'none'}
+              display={message?.content?.length > 0 && message?.userId === userLogin?.id ? 'flex' : 'none'}
               alignItems="center"
               gap="5px"
             >
@@ -118,7 +95,7 @@ const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, 
           </Box>
 
           <Text color={useColorModeValue('blackAlpha.800', 'whiteAlpha.700')} fontSize="13px">
-            {createAt && formatTime(createAt)}
+            {message?.createAt && formatTime(message?.createAt)}
           </Text>
         </Box>
       </Box>
@@ -126,4 +103,4 @@ const Message = ({ avatar, userId, id, displayName, content, createAt, isFloat, 
   )
 }
 
-export default Message
+export default memo(Message)

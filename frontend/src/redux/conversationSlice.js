@@ -3,6 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 const conversationSlice = createSlice({
   name: 'roomConversation',
   initialState: {
+    selectedRoom: {
+      info: null,
+      receiver: null
+    },
     getLastestMessage: {
       lastestMessage: undefined,
       roomId: undefined
@@ -22,25 +26,30 @@ const conversationSlice = createSlice({
       rooms: []
     },
     roomFloatSelect: {
-      Listreceiver: []
+      rooms: []
     }
   },
   reducers: {
+    getCurrentSelectedRoom: (state, action) => {
+      state.selectedRoom.info = action.payload.info
+      state.selectedRoom.receiver = action.payload.receiver
+    },
     chooseRoomFloat: (state, action) => {
-      const isOpened = state.roomFloatSelect.Listreceiver.some(room => {
-        return room?.roomId === action.payload.roomId
+      console.log({ payload: action.payload })
+      const isOpened = state.roomFloatSelect.rooms.some(room => {
+        return room?.info.id === action.payload.info.id
       })
-      const quantityRoom = state.roomFloatSelect.Listreceiver.length >= 3
-      if (quantityRoom && !isOpened) {
-        state.roomFloatSelect.Listreceiver = [...state.roomFloatSelect.Listreceiver.slice(1), { ...action.payload }]
+      const currentOpenRoom = state.roomFloatSelect.rooms.length >= 3
+      if (currentOpenRoom && !isOpened) {
+        state.roomFloatSelect.rooms = [...state.roomFloatSelect.rooms.slice(1), { ...action.payload }]
       } else {
-        if (isOpened) state.roomFloatSelect.Listreceiver = [...state.roomFloatSelect.Listreceiver]
-        else state.roomFloatSelect.Listreceiver = [{ ...action.payload }, ...state.roomFloatSelect.Listreceiver]
+        if (isOpened) state.roomFloatSelect.rooms = [...state.roomFloatSelect.rooms]
+        else state.roomFloatSelect.rooms = [action.payload, ...state.roomFloatSelect.rooms]
       }
     },
     closeRoomFloat: (state, action) => {
-      state.roomFloatSelect.Listreceiver = state.roomFloatSelect.Listreceiver.filter(room => {
-        return room.roomId !== action.payload
+      state.roomFloatSelect.rooms = state.roomFloatSelect.rooms.filter(room => {
+        return room.info.id !== action.payload
       })
     },
     getLastestMessage: (state, action) => {
@@ -88,7 +97,8 @@ export const {
   createRoomConversationSuccess,
   getAllRoomConversationStart,
   getAllRoomConversationFailed,
-  getAllRoomConversationSuccess
+  getAllRoomConversationSuccess,
+  getCurrentSelectedRoom
 } = conversationSlice.actions
 
 export default conversationSlice.reducer
