@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin("https://penguin-brown-eight.vercel.app/")
 public class WebSocketController {
   @Autowired
   private MessageRepository messageRepository;

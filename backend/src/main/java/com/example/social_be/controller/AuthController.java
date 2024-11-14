@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://penguin-brown-eight.vercel.app/", allowCredentials = "true")
 @RequestMapping("/api/auth")
 public class AuthController {
 

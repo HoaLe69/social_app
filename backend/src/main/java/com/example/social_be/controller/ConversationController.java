@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/conversation")
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin("https://penguin-brown-eight.vercel.app/")
 public class ConversationController {
   @Autowired
   private ConversationRepository conversationRepository;

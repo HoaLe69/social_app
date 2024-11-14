@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comment")
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin("https://penguin-brown-eight.vercel.app/")
 public class CommentController {
 
   @Autowired

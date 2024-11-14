@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin("https://penguin-brown-eight.vercel.app/")
 @RequestMapping("/api/message")
 public class MessageController {
   @Autowired
