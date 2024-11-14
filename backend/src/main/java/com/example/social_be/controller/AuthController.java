@@ -39,8 +39,6 @@ public class AuthController {
   private PasswordEncoder encoder;
   @Autowired
   private AuthenticationManager authenticationManager;
-  @Autowired
-  private SendEmailService emailService;
 
   private AuthUtil authUtil;
 

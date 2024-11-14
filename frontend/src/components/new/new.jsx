@@ -1,8 +1,9 @@
 import { Box, Heading, Image, useColorModeValue, Text, Link } from '@chakra-ui/react'
 import axios from 'axios'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useState } from 'react'
 import formatTime from '../../util/timeago'
-import useInfinity from '../../hooks/useInfinityScroll'
+import { useInView } from 'react-intersection-observer'
+import { BeatLoader } from 'react-spinners'
 
 const NewCard = forwardRef(({ infor }, ref) => {
   return (
@@ -41,32 +42,50 @@ const NewCard = forwardRef(({ infor }, ref) => {
 })
 
 const News = () => {
-  const { page, setHasmore, lastPostRef } = useInfinity()
+  //  const { page, setHasmore, lastPostRef } = useInfinity()
   const [news, setNews] = useState([])
-  useEffect(() => {
-    const apikey = '95e807e72f434d859fb379370df15ff9'
-    const pageSize = 3
-    const getNews = async () => {
-      try {
-        const baseUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apikey}&page=${page}&pageSize=${pageSize}`
-        const res = await axios.get(baseUrl)
-        setNews(pre => [...pre, ...res.articles])
-        setHasmore(true)
-      } catch (err) {
-        console.log(err)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasmore] = useState(true)
+  const [page, setPage] = useState(1)
+  const { ref, inView } = useInView()
+  const apikey = process.env.REACT_APP_NEWS_API_KEY
+  const PAGE_SIZE = 10
+
+  const fetchNew = useCallback(async () => {
+    if (loading || !hasMore) return
+    try {
+      setLoading(true)
+      const baseUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apikey}&page=${page}&pageSize=${PAGE_SIZE}`
+      const response = await axios.get(baseUrl)
+      if (!response?.data.articles.length) {
+        setHasmore(false)
+        return
       }
+      setNews(pre => [...pre, ...response.data.articles])
+      setPage(pre => pre + 1)
+      //      setNews(pre => [...pre, ...res.data.articles])
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
     }
-    getNews()
-  }, [page])
+  }, [page, hasMore])
+
+  useEffect(() => {
+    if (inView) {
+      fetchNew()
+    }
+  }, [inView])
   return (
     <Box>
       {news?.map((newinfo, index) => {
-        if (index + 1 === news.length) {
-          return <NewCard key={index} ref={lastPostRef} infor={newinfo} />
-        }
-
         return <NewCard key={index} infor={newinfo} />
       })}
+      <Box>
+        <Box pt={2} ref={ref} display="flex" justifyContent="center">
+          {loading && <BeatLoader color="white" />}
+        </Box>
+      </Box>
     </Box>
   )
 }

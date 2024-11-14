@@ -1,11 +1,12 @@
 import { Box, Button } from '@chakra-ui/react'
 import { BeatLoader } from 'react-spinners'
 import Post from './post'
-import { getAllPost } from '@redux/api-request/posts'
 import { useDispatch, useSelector } from 'react-redux'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { createPostCleanOldState, deletePostCleanOldState, editPostCleanOldState } from '../../redux/postSlice'
+import { getAllPost } from '../../redux/api-request/posts'
+import useRefreshable from '../../hooks/useRefreshable'
 
 const PostContainer = () => {
   const [loading, setLoading] = useState(false)
@@ -18,12 +19,14 @@ const PostContainer = () => {
   const postDeletedId = useSelector(state => state.post.deletePost.id)
   const postEdited = useSelector(state => state.post.editPost.post)
   const postCreated = useSelector(state => state.post.createPost.post)
+  const userLogin = useSelector(state => state.auth.authState.user)
 
   const fetchPost = useCallback(async () => {
     if (loading || !hasMore) return
     try {
       setLoading(true)
       const response = await getAllPost(page)
+      console.log({ response })
       if (!response.length) {
         setHasMore(false)
         return
@@ -41,10 +44,15 @@ const PostContainer = () => {
     if (inView) {
       fetchPost()
     }
-  }, [inView])
-  const handleRefreshPost = useCallback(() => {
+  }, [inView, userLogin])
+  const handleRefreshPost = useCallback(async () => {
     //todo
+    setPosts([])
+    setPage(0)
+    setHasMore(true)
+    await fetchPost()
   }, [])
+  useRefreshable('posts', handleRefreshPost)
 
   useEffect(() => {
     if (!postDeletedId) return

@@ -13,7 +13,6 @@ const route = {
   register: '/register',
   testsocket: '/testsocket/:id',
   verify: '/verify/:hash/:username',
-  reset: '/newpass/:hash/:username',
   following: '/following',
   news: '/news'
 }

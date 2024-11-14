@@ -12,13 +12,10 @@ const LogoBox = styled.span`
   line-height: 20px;
 `
 
-const Logo = () => {
-  const handleOnClickLogo = () => {
-    console.log(1)
-  }
+const Logo = ({ onClick }) => {
   return (
     <Link to={'/'}>
-      <LogoBox onClick={handleOnClickLogo}>
+      <LogoBox onClick={onClick}>
         <AiOutlineQq />
         <Text
           color={useColorModeValue('gray.800', 'whiteAlpha.900')}

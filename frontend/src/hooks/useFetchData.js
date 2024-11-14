@@ -1,8 +1,8 @@
-import axios from 'axios'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import axiosClient from '../config/axios'
 
-const useFetchData = (url, token) => {
+const useFetchData = url => {
   const [isLoading, setLoading] = useState(false)
   const [apiData, setApiData] = useState(null)
   const [serverError, setError] = useState(null)
@@ -10,9 +10,7 @@ const useFetchData = (url, token) => {
     setLoading(true)
     const fetchData = async () => {
       try {
-        const res = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const res = await axiosClient.get(url)
         setApiData(res)
         setLoading(false)
       } catch (err) {
@@ -21,7 +19,7 @@ const useFetchData = (url, token) => {
       }
     }
     if (!url?.includes('null')) fetchData()
-  }, [url, token])
+  }, [url])
   return { isLoading, apiData, serverError }
 }
 

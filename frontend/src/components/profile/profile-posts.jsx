@@ -66,13 +66,14 @@ const ProfilePostItem = ({
   )
 }
 
-const ProfilePost = ({ userId }) => {
+const ProfilePost = ({ userProfileId }) => {
   const dispatch = useDispatch()
   const profilePost = useSelector(state => state.post.getPostUser.posts)
-  const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
+
   useEffect(() => {
-    getAllPostUser(dispatch, userId, accessToken)
-  }, [userId, dispatch, accessToken])
+    getAllPostUser(dispatch, userProfileId)
+  }, [userProfileId, dispatch])
+
   return (
     <Box pt={5}>
       <Heading

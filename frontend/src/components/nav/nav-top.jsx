@@ -25,6 +25,7 @@ import { IoMdClose } from 'react-icons/io'
 import axiosClient from '../../config/axios'
 import { useSelector } from 'react-redux'
 import useClickOutside from '../../hooks/useClickOutside'
+import { refreshEvents } from '../../hooks/useRefreshable'
 
 const PopResult = ({ result, isOpen, setVisibleResult, userLoginId }) => {
   const refContainer = useRef(null)
@@ -84,6 +85,7 @@ const PopResult = ({ result, isOpen, setVisibleResult, userLoginId }) => {
 const NavTop = ({ isFixed }) => {
   const [search, setSearchValue] = useState('')
   const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshsing] = useState(false)
   const [result, setResult] = useState([])
   const [visibleResult, setVisibleResult] = useState(false)
   const debounceValue = useDebounce(search)
@@ -116,11 +118,36 @@ const NavTop = ({ isFixed }) => {
   const handleOnChange = e => {
     setSearchValue(e.target.value)
   }
+
+  const bgLoadingPost = useColorModeValue('#f0e7db', '#202023')
+  const handleRefreshPost = useCallback(async () => {
+    setRefreshsing(true)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    setRefreshsing(false)
+
+    refreshEvents.emit('refresh:posts')
+  }, [])
+
   return (
     <NavWrap isFixed={isFixed}>
       <Flex justify="space-between">
-        <Logo />
+        <Logo onClick={handleRefreshPost} />
         <Box pos="relative">
+          <Box
+            shadow="dark-lg"
+            display={refreshing ? 'flex' : 'none'}
+            alignItems="center"
+            justifyContent="center"
+            position="absolute"
+            top="120%"
+            left="50%"
+            bg={bgLoadingPost}
+            width="12"
+            height="12"
+            borderRadius="full"
+          >
+            <Spinner color="teal.500" />
+          </Box>
           <InputGroup bg={useColorModeValue('whiteAlpha.700', 'whiteAlpha.200')} rounded="20px" w="300px">
             <InputLeftElement pointerEvents="none">
               <BiSearchAlt />

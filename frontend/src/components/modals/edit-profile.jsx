@@ -10,88 +10,31 @@ import {
   Heading,
   FormControl,
   FormLabel,
-  Input,
   Stack,
   Textarea,
   Avatar,
-  VStack,
-  Popover,
-  PopoverTrigger,
-  PopoverArrow,
-  PopoverContent,
-  PopoverHeader,
-  PopoverCloseButton,
-  PopoverBody,
-  HStack
+  VStack
 } from '@chakra-ui/react'
-import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
-import { updateUser } from '@redux/api-request/user'
-import { getUserSuccess } from '@redux/userSlice'
+import { updateUser } from '../../redux/api-request/user'
 
-const ListAvatar = ({ handleChooseImage }) => {
-  const importAll = r => r.keys().map(r)
-  const images = importAll(require.context('../../assets/avatar', false, /\.(png|jpe?g|svg)$/))
-
-  const exclude = ['auth', 'emptyRoom']
-  return (
-    <HStack justifyContent="center" gap="20px" flexWrap="wrap">
-      {images.map(image => {
-        return (
-          !exclude.includes(image) && (
-            <Avatar
-              key={image}
-              onClick={() => handleChooseImage(image)}
-              cursor="pointer"
-              _hover={{
-                boxShadow: '1px 1px 4px 4px rgba(255 , 255 ,255 , 0.7)'
-              }}
-              src={image}
-            />
-          )
-        )
-      })}
-    </HStack>
-  )
-}
-
-const EditProfileModal = ({ isOpen, onClose, user }) => {
+const EditProfileModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch()
-  const userLogin = JSON.parse(localStorage.getItem('user'))
-  const currentUser = useSelector(state => state.user.users?.currentUser)
+  const userLogin = useSelector(state => state.auth.authState.user)
   const isLoading = useSelector(state => state.user.updateUser.isFetching)
-  const [previewSource, setPreviewSource] = useState(undefined)
   const formik = useFormik({
     initialValues: {
-      avatar: currentUser?.avatar,
-      displayName: '',
       about: ''
     },
-    onSubmit: data => {
-      const sendData = {}
-      for (const key in data) {
-        if (key === 'avatar') {
-          if (previewSource) sendData[key] = previewSource
-        } else if (data[key] !== '') sendData[key] = data[key]
+    onSubmit: async data => {
+      if (!data.about.trim()) return
+      const updateInfo = {
+        id: userLogin?.id,
+        ...data
       }
-      updateUser(
-        dispatch,
-        currentUser?.id,
-        {
-          ...sendData
-        },
-        userLogin?.accessToken
-      )
-      dispatch(getUserSuccess({ ...user, ...sendData }))
-      const userStorage = {
-        ...userLogin,
-        ...sendData
-      }
-      localStorage.setItem('user', JSON.stringify(userStorage))
-      if (!isLoading) {
-        onClose()
-      }
+      await updateUser(dispatch, updateInfo)
+      onClose()
     }
   })
   return (
@@ -104,34 +47,11 @@ const EditProfileModal = ({ isOpen, onClose, user }) => {
         <ModalCloseButton />
         <ModalBody>
           <VStack>
-            <Popover>
-              <PopoverTrigger>
-                <Avatar src={previewSource ? previewSource : currentUser?.avatar} cursor="pointer" size="xl" />
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverCloseButton />
-                <PopoverHeader>Choose avatar</PopoverHeader>
-                <PopoverBody>
-                  <ListAvatar handleChooseImage={setPreviewSource} />
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-            <Heading fontSize="15px">{currentUser?.displayName}</Heading>
+            <Avatar src={userLogin?.avatar} cursor="pointer" size="xl" />
+            <Heading fontSize="15px">{userLogin?.displayName}</Heading>
           </VStack>
           <form onSubmit={formik.handleSubmit}>
             <Stack spacing={4}>
-              <FormControl>
-                <FormLabel htmlFor="displayName">Display name</FormLabel>
-                <Input
-                  onChange={formik.handleChange}
-                  value={formik.values.displayName}
-                  type="text"
-                  name="displayName"
-                  id="displayName"
-                  placeholder="Enter your display name..."
-                />
-              </FormControl>
               <FormControl>
                 <FormLabel htmlFor="about">Bio</FormLabel>
                 <Textarea

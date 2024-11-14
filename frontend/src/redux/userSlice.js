@@ -12,7 +12,7 @@ const userSlice = createSlice({
       isFetching: false,
       error: false
     },
-    followOrtherUser: {
+    followOtherUser: {
       isFetching: false,
       error: false,
       user: {}
@@ -37,7 +37,7 @@ const userSlice = createSlice({
       state.userProfile.isFetching = false
       state.userProfile.info = action.payload
       state.userProfile.error = false
-      state.followOrtherUser.isFetching = false
+      state.followOtherUser.isFetching = false
     },
     getUserProfileFailure: state => {
       state.userProfile.isFetching = false
@@ -46,25 +46,26 @@ const userSlice = createSlice({
     updateUserStart: state => {
       state.updateUser.isFetching = true
     },
-    updateUserSuccess: state => {
+    updateUserSuccess: (state, action) => {
       state.updateUser.isFetching = false
       state.updateUser.error = false
+      state.userProfile.info = action.payload
     },
     updateUserFailed: state => {
       state.updateUser.isFetching = false
       state.updateUser.error = true
     },
-    followOrtherUserStart: state => {
-      state.followOrtherUser.isFetching = true
+    followOtherUserStart: state => {
+      state.followOtherUser.isFetching = true
     },
-    followOrtherUserSuccess: (state, action) => {
-      state.followOrtherUser.isFetching = false
-      state.followOrtherUser.error = false
-      state.followOrtherUser.user = action.payload
+    followOtherUserSuccess: (state, action) => {
+      state.followOtherUser.isFetching = false
+      state.followOtherUser.error = false
+      state.followOtherUser.user = action.payload
     },
-    followOrtherUserFailed: state => {
-      state.followOrtherUser.isFetching = false
-      state.followOrtherUser.error = true
+    followOtherUserFailed: state => {
+      state.followOtherUser.isFetching = false
+      state.followOtherUser.error = true
     },
     getListUserFollowingStart: state => {
       state.getListUserFollowing.isFetching = true
@@ -100,9 +101,9 @@ export const {
   updateUserFailed,
   updateUserStart,
   updateUserSuccess,
-  followOrtherUserStart,
-  followOrtherUserFailed,
-  followOrtherUserSuccess,
+  followOtherUserStart,
+  followOtherUserFailed,
+  followOtherUserSuccess,
   getListUserFollowingStart,
   getListUserFollowingSuccess,
   getListUserFollowingFailed,

@@ -20,11 +20,13 @@ const ListFollowingModal = ({ isOpen, onClose, listsUserIdFollowing }) => {
   const dispatch = useDispatch()
   const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
   const listsFollowing = useSelector(state => state.user.getListUserFollowing?.listFollowing)
+
   useEffect(() => {
+    if (!isOpen) return
     if (listsUserIdFollowing) {
-      getListFollowing(dispatch, listsUserIdFollowing, accessToken)
+      getListFollowing(dispatch, listsUserIdFollowing)
     }
-  }, [dispatch, accessToken, listsUserIdFollowing])
+  }, [dispatch, isOpen])
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />

@@ -18,13 +18,14 @@ import { getListFollower } from '@redux/api-request/user'
 
 const ListFollowerModal = ({ isOpen, onClose, listsUserIdFollower }) => {
   const dispatch = useDispatch()
-  const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
   const listFollower = useSelector(state => state.user.getListUserFollower?.listFollower)
+
   useEffect(() => {
+    if (!isOpen) return
     if (listsUserIdFollower) {
-      getListFollower(dispatch, listsUserIdFollower, accessToken)
+      getListFollower(dispatch, listsUserIdFollower)
     }
-  }, [dispatch, accessToken, listsUserIdFollower])
+  }, [dispatch, isOpen])
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />

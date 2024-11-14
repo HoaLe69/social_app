@@ -2,9 +2,10 @@ import PostContainer from '@components/post/post-container'
 import { Avatar, Text, Box, useColorModeValue, useDisclosure } from '@chakra-ui/react'
 import CreatePostModal from '@components/modals/create'
 import { memo } from 'react'
-import ChatFloat from '@components/chat-float/chat-float'
 import LayoutTab from '../layout/layout-tab'
 import { useSelector } from 'react-redux'
+import ChatFloat from '../components/chat-float/chat-float'
+import { getAllPost } from '@redux/api-request/posts'
 
 const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -32,7 +33,7 @@ const Home = () => {
             {isOpen && <CreatePostModal isOpen={isOpen} onClose={onClose} />}
           </Box>
         </Box>
-        <PostContainer />
+        <PostContainer getPost={getAllPost} />
       </Box>
       <ChatFloat />
     </LayoutTab>

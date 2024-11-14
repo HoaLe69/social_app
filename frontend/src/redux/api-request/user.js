@@ -2,8 +2,8 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailed,
-  followOrtherUserStart,
-  followOrtherUserFailed,
+  followOtherUserStart,
+  followOtherUserFailed,
   getListUserFollowingStart,
   getListUserFollowingSuccess,
   getListUserFollowingFailed,
@@ -44,15 +44,11 @@ export const getUserProfile = async (dispatch, userId) => {
 }
 
 //update current user
-export const updateUser = async (dispatch, id, userInforUpdate, accessToken) => {
+export const updateUser = async (dispatch, updateInfo) => {
   dispatch(updateUserStart())
   try {
-    await axios.patch(`${baseUrl}/user/update/${id}`, userInforUpdate, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-    dispatch(updateUserSuccess())
+    const res = await axiosClient.patch(`/user/update/${updateInfo.id}`, updateInfo)
+    dispatch(updateUserSuccess(res))
   } catch (err) {
     console.log(err)
     dispatch(updateUserFailed())
@@ -60,36 +56,14 @@ export const updateUser = async (dispatch, id, userInforUpdate, accessToken) => 
 }
 
 //follow orther user
-export const followOrtherUser = async (dispatch, friendId, yourId, accessToken, relation, userLogin) => {
-  dispatch(followOrtherUserStart())
+export const followOtherUser = async (dispatch, friendId, userLoginId) => {
+  dispatch(followOtherUserStart())
   try {
-    const res = await axios.patch(`${baseUrl}/user/interactive/${friendId}`, yourId, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-    const relationship = relation()
-    if (relationship === 'Following')
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...userLogin,
-          following: userLogin?.following.filter(id => id !== friendId)
-        })
-      )
-    else {
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...userLogin,
-          following: [...userLogin?.following, friendId]
-        })
-      )
-    }
+    const res = await axiosClient.patch(`/user/interactive/${friendId}`, { id: userLoginId })
     dispatch(getUserProfileSuccess(res))
   } catch (err) {
     console.log(err)
-    dispatch(followOrtherUserFailed())
+    dispatch(followOtherUserFailed())
   }
 }
 

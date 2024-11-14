@@ -8,15 +8,15 @@ import ChatFloat from '@components/chat-float/chat-float'
 
 const Profile = () => {
   const { pathname } = useLocation()
-  const userIdFromPath = pathname.split('/')[2]
+  const userProfileId = pathname.split('/')[2]
   return (
     <Box>
       <Box display={{ base: 'none', lg: 'flex' }}>
         <NavTop />
       </Box>
       <Container maxW="container.lg" pt={4} pb={{ base: '20', lg: '2' }}>
-        <ProfileHeader userId={userIdFromPath} />
-        <ProfilePost userId={userIdFromPath} />
+        <ProfileHeader userProfileId={userProfileId} />
+        <ProfilePost userProfileId={userProfileId} />
       </Container>
       <Box display={{ base: 'flex', lg: 'none' }}>
         <NavBot />

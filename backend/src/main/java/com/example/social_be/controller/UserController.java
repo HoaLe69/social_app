@@ -1,7 +1,5 @@
 package com.example.social_be.controller;
 
-import com.example.social_be.model.collection.CommentCollection;
-import com.example.social_be.model.collection.PostCollection;
 import com.example.social_be.model.collection.UserCollection;
 import com.example.social_be.model.custom.CustomUserDetail;
 import com.example.social_be.model.request.RequestList;
@@ -12,8 +10,6 @@ import com.example.social_be.repository.CommentRepository;
 import com.example.social_be.repository.PostRepository;
 import com.example.social_be.repository.UserRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +28,8 @@ import java.util.List;
 @RequestMapping(value = "/api/user")
 public class UserController {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+  // private static final Logger logger =
+  // LoggerFactory.getLogger(UserController.class);
   @Autowired
   private UserRepository userRepository;
   // get user by id
@@ -96,31 +93,11 @@ public class UserController {
   public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequest update, @PathVariable String id) {
     try {
       UserCollection user = userRepository.findUserCollectionById(id);
-      List<PostCollection> posts = postRepository.findAllByUserId(id);
-      List<CommentCollection> comments = commentRepository.findAllByUserId(id);
-      if (user != null) {
-        if (!posts.isEmpty()) {
-          for (PostCollection post : posts) {
-            post.setDisplayName(update.getDisplayName() != null ? update.getDisplayName() : user.getDisplayName());
-            post.setPhotoUrl(update.getAvatar() != null ? update.getAvatar() : user.getAvatar());
-            postRepository.save(post);
-          }
-        }
-        if (!comments.isEmpty()) {
-          for (CommentCollection comment : comments) {
-            comment.setDisplayName(update.getDisplayName() != null ? update.getDisplayName() : user.getDisplayName());
-            comment.setAvatar(update.getAvatar() != null ? update.getAvatar() : user.getAvatar());
-            commentRepository.save(comment);
-          }
-        }
-        user.setDisplayName(update.getDisplayName() != null ? update.getDisplayName() : user.getDisplayName());
-        user.setAbout(update.getAbout() != null ? update.getAbout() : user.getAbout());
-        user.setAvatar(update.getAvatar() != null ? update.getAvatar() : user.getAvatar());
-        userRepository.save(user);
-        return ResponseEntity.ok(new UserResponse(user));
-      } else {
-        return ResponseEntity.badRequest().body(new MessageResponse("Something wrong"));
-      }
+      if (user == null)
+        return ResponseEntity.badRequest().body("Invalid user id");
+      user.setAbout(update.getAbout());
+      UserCollection savedUser = userRepository.save(user);
+      return ResponseEntity.ok(savedUser);
     } catch (Exception ex) {
       return ResponseEntity.badRequest().body(new MessageResponse("Something wrong"));
     }
@@ -134,19 +111,22 @@ public class UserController {
   }
 
   // follow and unfollow
-  @PatchMapping("/interactive/{id}")
+  @PatchMapping("/interactive/{visiter}")
   @Transactional
-  public ResponseEntity<?> interactiveUser(@RequestBody UserCollection userId, @PathVariable String id) {
-    String currentId = userId.getId();
-    if (!currentId.equals(id)) {
+  public ResponseEntity<?> interactiveUser(@RequestBody UserCollection userLogin, @PathVariable String visiter) {
+    String currentId = userLogin.getId();
+    if (!currentId.equals(visiter)) {
       UserCollection currentUser = userRepository.findUserCollectionById(currentId);
-      UserCollection userFollow = userRepository.findUserCollectionById(id);
+      UserCollection userFollow = userRepository.findUserCollectionById(visiter);
 
+      // list following of user login
       List<String> listFollowing = currentUser.getFollowing();
+      // list follower of visiter
       List<String> listFollower = userFollow.getFollower();
       try {
-        if (!listFollowing.contains(id)) {
-          listFollowing.add(id);
+        if (!listFollowing.contains(visiter)) {
+          // follow
+          listFollowing.add(visiter);
           currentUser.setFollowing(listFollowing);
           userRepository.save(currentUser);
           listFollower.add(currentId);
@@ -154,7 +134,8 @@ public class UserController {
           userRepository.save(userFollow);
           return ResponseEntity.ok(new UserResponse(userFollow));
         } else {
-          listFollowing.remove(id);
+          // unfolllow
+          listFollowing.remove(visiter);
           currentUser.setFollowing(listFollowing);
           userRepository.save(currentUser);
           listFollower.remove(currentId);

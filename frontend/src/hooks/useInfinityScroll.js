@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const useInfinity = () => {
   const [page, setPage] = useState(0)

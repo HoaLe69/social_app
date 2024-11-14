@@ -8,7 +8,7 @@ public class AuthUtil {
   public void attachTokenInCookieResponse(HttpServletResponse response, String accessToken, String refreshToken) {
     Cookie accessTokenCookie = new Cookie("token", accessToken);
     accessTokenCookie.setHttpOnly(true);
-    accessTokenCookie.setMaxAge(60 * 60 * 24);
+    accessTokenCookie.setMaxAge(60 * 60 * 24 * 7);
     accessTokenCookie.setPath("/");
 
     Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);

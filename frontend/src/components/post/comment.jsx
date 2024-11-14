@@ -173,7 +173,7 @@ const Comment = () => {
     }
   }, [])
 
-  const { sendMessage } = useStompClient(`/topic/comments/${postId}`, handleIncomingComment)
+  const { sendMessage } = useStompClient(`/topic/comments`, postId, handleIncomingComment)
 
   const dispatch = useDispatch()
 
