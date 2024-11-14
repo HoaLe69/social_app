@@ -1,7 +1,7 @@
 import { Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, ModalHeader, Box } from '@chakra-ui/react'
 import Comment from '../post/comment'
 import { useSelector } from 'react-redux'
-import Post from '../post/post'
+import Post from '../post/post-item'
 import { COLOR_THEME } from '../../constant'
 
 const FeedModal = ({ isOpen, onClose }) => {

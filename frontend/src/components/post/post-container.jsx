@@ -1,6 +1,6 @@
 import { Box, Button } from '@chakra-ui/react'
 import { BeatLoader } from 'react-spinners'
-import Post from './post'
+import Post from './post-item'
 import { useDispatch, useSelector } from 'react-redux'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'

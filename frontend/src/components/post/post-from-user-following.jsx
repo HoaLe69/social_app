@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import { BeatLoader } from 'react-spinners'
-import Post from './post'
+import Post from './post-item'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { getAllPostFromUserFollowing } from '@redux/api-request/posts'
