@@ -42,7 +42,7 @@ const Login = () => {
     }
   })
   const googleAuthorizeURL = useCallback(token => {
-    return `http://localhost:3000/login/redirect/google?code=${token}`
+    return `https://penguin-brown-eight.vercel.app/login/redirect/google?code=${token}`
   }, [])
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: tokenResponse => {
