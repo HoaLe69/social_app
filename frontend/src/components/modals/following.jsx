@@ -18,7 +18,6 @@ import { getListFollowing } from '../../redux/api-request/user'
 
 const ListFollowingModal = ({ isOpen, onClose, listsUserIdFollowing }) => {
   const dispatch = useDispatch()
-  const accessToken = JSON.parse(localStorage.getItem('user'))?.accessToken
   const listsFollowing = useSelector(state => state.user.getListUserFollowing?.listFollowing)
 
   useEffect(() => {

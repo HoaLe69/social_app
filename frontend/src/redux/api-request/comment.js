@@ -1,5 +1,5 @@
 import axiosClient from '../../config/axios'
-import { getAllCommentFailed, getAllCommentStart, getAllCommentSuccess } from '../commentSlice'
+import { getAllCommentFailed, getAllCommentStart } from '../commentSlice'
 
 // get all comment
 export const getAllComment = async (dispatch, postId, page = 0) => {

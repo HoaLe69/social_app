@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axiosClient from '../../config/axios'
 import { getCurrentSelectedRoom } from '../../redux/conversationSlice'

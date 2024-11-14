@@ -1,4 +1,4 @@
-import { Box, Text, Spinner, Link, HStack, VStack } from '@chakra-ui/react'
+import { Box, Text, Spinner, Link, VStack } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useNavigate, Link as ReactRouterLink } from 'react-router-dom'
 import { getUserProfileFromGoogle, authWithSocial } from '../../redux/api-request/auth'

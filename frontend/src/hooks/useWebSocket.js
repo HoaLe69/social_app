@@ -2,53 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import SockJS from 'sockjs-client'
 import * as Stomp from 'stompjs'
 
-const WebSocket = (setComments, setFilterDel = function () {}) => {
-  let stompClient = null
-  const connect = (channel, id) => {
-    //TODO: replace the url on production
-    const socket = new SockJS('http://localhost:8080/ws')
-    const stomp = Stomp.over(socket)
-    stompClient = stomp
-    stomp.connect({}, frame => {
-      console.log('Connected', frame)
-      stomp.subscribe(`/topic/${channel}/${id}`, message => {
-        const messageRes = JSON.parse(message.body)
-        console.log({ messageRes })
-        if (messageRes.body.message) {
-          setFilterDel(messageRes.body)
-        } else {
-          setComments(pre => {
-            const index = pre.findIndex(mess => mess.id === messageRes.body.id)
-            if (index !== -1) {
-              const newListComment = pre
-              const temp = newListComment.splice(index, 1, messageRes.body)
-              return [...newListComment]
-            }
-            return [...pre, messageRes.body]
-          })
-        }
-      })
-    })
-
-    // setStompClient(stomp);
-  }
-  const sendMessage = (message, channel, id) => {
-    if (stompClient) {
-      stompClient.send(
-        `/app/${channel}/${id}`,
-        {},
-        JSON.stringify({
-          ...message
-        })
-      )
-    }
-  }
-  const disconnect = () => {
-    if (stompClient) stompClient.disconnect()
-  }
-  return { sendMessage, disconnect, connect }
-}
-
 export const useStompClient = (topic, id, onMessageReceived) => {
   const [client, setClient] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
@@ -99,5 +52,3 @@ export const useStompClient = (topic, id, onMessageReceived) => {
 
   return { sendMessage, isConnected }
 }
-
-export default WebSocket

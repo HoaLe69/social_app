@@ -1,4 +1,4 @@
-import { InputGroup, useColorModeValue, Input, InputRightElement, Box, Badge } from '@chakra-ui/react'
+import { InputGroup, useColorModeValue, Input, InputRightElement, Box } from '@chakra-ui/react'
 import { useCallback, useRef, useState } from 'react'
 import { BsFillSendFill } from 'react-icons/bs'
 import { FaRegSmile } from 'react-icons/fa'

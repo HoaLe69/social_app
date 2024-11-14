@@ -1,4 +1,4 @@
-import { Box, Link, Heading, Image, Grid, GridItem, useDisclosure } from '@chakra-ui/react'
+import { Box, Heading, Image, Grid, GridItem, useDisclosure } from '@chakra-ui/react'
 import { AiFillHeart } from 'react-icons/ai'
 import { getAllPostUser } from '@redux/api-request/posts'
 import { useDispatch, useSelector } from 'react-redux'

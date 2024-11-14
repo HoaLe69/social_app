@@ -11,10 +11,6 @@ const conversationSlice = createSlice({
       lastestMessage: undefined,
       roomId: undefined
     },
-    selectedRoom: {
-      id: undefined,
-      recevierId: undefined
-    },
     createRoomConversation: {
       isFetching: false,
       error: false,
@@ -56,9 +52,6 @@ const conversationSlice = createSlice({
       state.getLastestMessage.lastestMessage = action.payload.mess
       state.getLastestMessage.roomId = action.payload.id
     },
-    getSelectedRoom: (state, action) => {
-      state.selectedRoom.id = action.payload
-    },
     createRoomConversationStart: state => {
       state.createRoomConversation.isFetching = true
     },
@@ -90,7 +83,6 @@ const conversationSlice = createSlice({
 export const {
   closeRoomFloat,
   chooseRoomFloat,
-  getSelectedRoom,
   getLastestMessage,
   createRoomConversationStart,
   createRoomConversationFailed,
